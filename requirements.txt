@@ -1,1 +1,7 @@
 numpy
+pandas
+geopandas
+shapely
+windrose
+math
+matplotlib
