@@ -3,5 +3,4 @@ pandas
 geopandas
 shapely
 windrose
-math
 matplotlib
