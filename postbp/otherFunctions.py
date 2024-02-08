@@ -1,6 +1,13 @@
 import numpy as np
-from common import prj2hex
+# from common import prj2hex
 import geopandas as gpd
+
+def prj2hex(shp0, hexagons, threshold=0):
+    shp1 = gpd.overlay(shp0, hexagons, how='intersection') 
+    shp1['areaFire'] = shp1.geometry.area
+    shp1 = shp1.loc[shp1['areaFire'] > threshold]
+    shp1.drop(labels='areaFire', axis=1, inplace=True)
+    return shp1
 
 def generate_ignProb(ignition, hexagons):
     ign = gpd.sjoin(ignition, hexagons, how = 'inner', op = 'within')
