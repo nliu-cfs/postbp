@@ -28,7 +28,7 @@ def angle_from_2pts(p1, p2):
         angle = 360 + angle
     return angle
 
-def generate_fireRose(pijVectors, nodes, **kwargs):
+def generate_fire_rose(pijVectors, nodes, **kwargs):
     pij = pijVectors.copy()
     pij = pij.merge(nodes, left_on = 'desti', right_on = 'Node_ID', how = 'left')
     pij.drop(labels = ['Node_ID_x', 'Node_ID_y'], axis = 1, inplace = True)
@@ -42,7 +42,7 @@ def generate_fireRose(pijVectors, nodes, **kwargs):
     pij['pij_len'] = pij['pij']*pij['len']
     return pij
 
-def plotRose(pijRose, column='pij', save = False):
+def plot_rose(pijRose, column='pij', save = False):
     if save:
         ax = WindroseAxes.from_ax()
         ax.bar(pijRose['angle'], pijRose[column], normed=True, blowto=False, cmap=cm.Set2, opening=0.8, edgecolor='white')

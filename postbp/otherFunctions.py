@@ -9,7 +9,7 @@ def prj2hex(shp0, hexagons, threshold=0):
     shp1.drop(labels='areaFire', axis=1, inplace=True)
     return shp1
 
-def generate_ignProb(ignition, hexagons):
+def generate_ign_prob(ignition, hexagons):
     ign = gpd.sjoin(ignition, hexagons, how = 'inner', op = 'within')
     ignGr = ign.groupby(['Node_ID'])[['fire']].count()
     ignGr.rename(column={'fire':'ignCount'})
@@ -34,7 +34,7 @@ def generate_ESA(fire_vectors, AOCshp, fireshp, hexagons, pij):
     fireAOCshp['area_ha'] = fireAOCshp.area/10000
     return fireAOCshp
 
-def generate_burnProb(fireshp, hexagons, **kwargs):
+def generate_burn_prob(fireshp, hexagons, **kwargs):
     fireOL = prj2hex(fireshp, hexagons, threshold=0)
     burned = fireOL.groupby('Node_ID')[['fire']].count()
     burned.reset_index(inplace=True)
