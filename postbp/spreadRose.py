@@ -29,8 +29,17 @@ def angle_from_2pts(p1, p2):
     return angle
 
 def generate_fire_rose(pijVectors, nodes, **kwargs):
+
     pij = pijVectors.copy()
-    pij = pij.merge(nodes, left_on = 'desti', right_on = 'Node_ID', how = 'left')
+    if 'Node_ID' in kwargs:
+        nodes.rename(columns={kwargs["Node_ID"]: 'Node_ID'}, inplace=True)
+    if 'column_i' in kwargs:
+        pij.rename(columns={kwargs["column_i"]: 'column_i'}, inplace=True)    
+    if 'column_j' in kwargs:
+        pij.rename(columns={kwargs["column_j"]: 'column_j'}, inplace=True)     
+
+    pij = nodes.merge(pij, left_on = 'Node_ID', right_on = 'column_i', how = 'right')
+    pij = pij.merge(nodes, left_on = 'column_j', right_on = 'Node_ID', how = 'left')    
     pij.drop(labels = ['Node_ID_x', 'Node_ID_y'], axis = 1, inplace = True)
     for index, row in pij.iterrows():
         pij.at[index, 'angle'] = angle_from_pij(row)
