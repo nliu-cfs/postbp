@@ -8,18 +8,18 @@ from postbp.common import (
     prj2hex,  #noqa
     pij_to_shp, #noqa
 )
-from .otherFunctions import (
+from postbp.otherFunctions import (
     generate_ign_prob,  #noqa
     generate_ESA,  #noqa
     generate_burn_prob,  #noqa
     generate_SSR,  #noqa
     generate_fireshed,   #noqa
 )
-from .spreadRose import (
+from postbp.spreadRose import (
     generate_fire_rose,  #noqa
     plot_rose,   #noqa
 )
-from .tessellation import (
+from postbp.tessellation import (
     create_hexagons_nodes,  #noqa
     create_arcs,  #noqa
     nodes_from_hexagons,  #noqa
