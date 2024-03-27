@@ -1,0 +1,101 @@
+'''Module to project fire and ignition points to hexagon network.
+1. user confirm whether there are multiple fires in each iteration:
+    if yes, using spatialjoin_fire_iteration
+    else, using spatialjoin_fire
+
+2. user confirm whether is processing spreading by day data:
+    if yes, using module daily_progression
+    else, current module suffices
+'''
+import geopandas as gpd
+import pandas as pd
+from postbp.common import prj2hex
+import warnings
+warnings.filterwarnings("ignore")
+from shapely.errors import ShapelyDeprecationWarning
+warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
+
+def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
+    
+    # make sure hexagons, fireShp and ignition point shapefile are in the same projection
+    ignition = ignition.to_crs(fireshp.crs)
+    hexagon = hexagon.to_crs(fireshp.crs)
+
+    fire_vectors = pd.DataFrame()
+    errorlog = []
+
+    if not iteration:
+        for i in fireshp['fire']:
+            try:
+                fire_i = fireshp.loc[fireshp['fire'] == i]
+                fire_ni = prj2hex(fire_i, hexagon, threshold)                        
+                pts_i = ignition.loc[ignition['fire'] == i]
+                #if newer version op is replace by predicate
+                pts_ni = gpd.sjoin(pts_i, hexagon, how = 'inner', op = 'within')
+                pts_ni = pts_ni[['fire', 'Node_ID']]
+                
+                dfTemp = fire_ni.merge(pts_ni, on = 'fire', how = 'left')
+                dfTemp = dfTemp.drop(dfTemp[dfTemp['Node_ID_x'] == dfTemp['Node_ID_y']].index)
+                dfTemp.drop(labels = ['geometry'], axis = 1, inplace = True)
+                fire_vectors = pd.concat([fire_vectors, dfTemp], sort = True)
+                
+            except Exception as e:
+                errorlog.append(f'{e} occurs for fire ID # {i}')
+        # output errorlog to a txt
+        return fire_vectors
+
+
+    if iteration:
+        for j in set(fireshp['iteration']):
+            fire_j = fireshp.loc[fireshp['iteration'] == j]
+            pts_j = ignition.loc[ignition['iteration'] == j]
+            
+            for i in fireshp['fire']:
+                try:
+                    fire_i = fire_j.loc[fire_j['fire'] == i]
+                    fire_ni = prj2hex(fire_i, hexagon, threshold)                             
+                    pts_i = pts_j.loc[pts_j['fire'] == i]
+                    #if newer version op is replace by predicate
+                    pts_ni = gpd.sjoin(pts_i, hexagon, how = 'inner', op = 'within') 
+                    pts_ni = pts_ni[['fire', 'Node_ID']]
+                    
+                    dfTemp = fire_ni.merge(pts_ni, on = 'fire', how = 'left')
+                    dfTemp = dfTemp.drop(dfTemp[dfTemp['Node_ID_x'] == dfTemp['Node_ID_y']].index)
+                    dfTemp.drop(labels = ['geometry'], axis = 1, inplace = True)
+                    fire_vectors = pd.concat([fire_vectors, dfTemp], sort = True)
+                
+                except Exception as e:
+                    errorlog.append(f'{e} occurs for fire ID # {i}')
+        # output errorlog to a txt                   
+        return fire_vectors
+            
+def generate_fire_vectors(fireshp, ignition, hexagons, threshold = 0, loopBy = "fire", **kwargs):
+    if 'Node_ID' in kwargs:
+        hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+    
+    if loopBy == "iteration":
+        fire_vectors = spatial_join(fireshp, ignition, hexagon, threshold, iteration=True)
+    
+    if loopBy == "fire":
+        fire_vectors = spatial_join(fireshp, ignition, hexagon, threshold, iteration=False)
+     
+    fire_vectors = fire_vectors.reset_index(drop = True)
+    fire_vectors.drop(fire_vectors[fire_vectors['Node_ID_y'].isna()].index, inplace = True)                    
+    
+    fire_vectors['Node_ID_x'] = fire_vectors['Node_ID_x'].astype(int)
+    fire_vectors['Node_ID_y'] = fire_vectors['Node_ID_y'].astype(int)
+    
+    fire_vectors.columns = ['Node_ID_x', 'Node_ID_y', 'fire', 'iteration']
+    fire_vectors.rename(columns={'Node_ID_x':'desti', 'Node_ID_y':'origi'}, inplace=True)
+    return fire_vectors
+
+def pij_from_vectors(vectors, iterations):
+
+    fire_pij = vectors.groupby(['desti', 'origi'])[['fire']].count()
+    fire_pij.reset_index(inplace = True)
+    fire_pij = fire_pij.drop(fire_pij[fire_pij['desti'] == fire_pij['origi']].index)
+    fire_pij['pij'] = fire_pij['fire'] / iterations
+    fire_pij['pij'] = fire_pij['pij'].round(5)
+    fire_pij['pij'] = fire_pij['pij'].apply(lambda x: '%.5f' % x)
+    
+    return fire_pij

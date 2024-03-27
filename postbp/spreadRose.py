@@ -3,7 +3,7 @@ import matplotlib.cm as cm
 import pandas as pd
 import geopandas as gpd
 from math import atan2, degrees
-from shapely.geometry import LineString  #Polygon, Point, 
+from shapely.geometry import LineString 
 from matplotlib import pyplot as plt
 
 def angle_from_pij(record):
@@ -29,22 +29,17 @@ def angle_from_2pts(p1, p2):
     return angle
 
 def generate_fire_rose(pijVectors, nodes, **kwargs):
-
-    pij = pijVectors.copy()
     if 'Node_ID' in kwargs:
-        nodes.rename(columns={kwargs["Node_ID"]: 'Node_ID'}, inplace=True)
-    if 'column_i' in kwargs:
-        pij.rename(columns={kwargs["column_i"]: 'column_i'}, inplace=True)    
-    if 'column_j' in kwargs:
-        pij.rename(columns={kwargs["column_j"]: 'column_j'}, inplace=True)     
+        node = nodes.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+    pij = pijVectors.copy()  
 
-    pij = nodes.merge(pij, left_on = 'Node_ID', right_on = 'column_i', how = 'right')
-    pij = pij.merge(nodes, left_on = 'column_j', right_on = 'Node_ID', how = 'left')    
+    pij = node.merge(pij, left_on = 'Node_ID', right_on = 'column_i', how = 'right')
+    pij = pij.merge(node, left_on = 'column_j', right_on = 'Node_ID', how = 'left')    
     pij.drop(labels = ['Node_ID_x', 'Node_ID_y'], axis = 1, inplace = True)
     for index, row in pij.iterrows():
         pij.at[index, 'angle'] = angle_from_pij(row)
     dffLine = [LineString(xy) for xy in zip(pij['geometry_x'], pij['geometry_y'])]
-    pij = gpd.GeoDataFrame(pij, crs = nodes.crs, geometry = dffLine )
+    pij = gpd.GeoDataFrame(pij, crs = node.crs, geometry = dffLine )
     pij.drop(labels = ['geometry_x', 'geometry_y'], axis = 1, inplace = True)
     pij['len'] = pij.geometry.length
     pij['pij'] = pij['pij'].astype(float)
@@ -53,13 +48,15 @@ def generate_fire_rose(pijVectors, nodes, **kwargs):
 
 def plot_rose(pijRose, column='pij', save = False):
     if save:
+        plt.rcParams.update({'font.size': 20})
         ax = WindroseAxes.from_ax()
         ax.bar(pijRose['angle'], pijRose[column], normed=True, blowto=False, cmap=cm.Set2, opening=0.8, edgecolor='white')
-        ax.set_legend()
+        ax.set_legend(fontsize="20",loc=(1.01, 0.01),frameon=False)
         plt.savefig(column + 'Rose.png', bbox_inches='tight', pad_inches=.1, transparent=False)
         plt.close()
     else:
+        plt.rcParams.update({'font.size': 20})
         ax = WindroseAxes.from_ax()
         ax.bar(pijRose['angle'], pijRose[column], normed=True, blowto=False, cmap=cm.Set2, opening=0.8, edgecolor='white')
-        ax.set_legend()
+        ax.set_legend(fontsize="20",loc=(1.01, 0.01),frameon=False)
         plt.show()

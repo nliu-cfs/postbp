@@ -64,7 +64,7 @@ def create_hexgrids(area, x, y):
     c = [[x + math.cos(math.radians(angle)) * l, y + math.sin(math.radians(angle)) * l] for angle in range(0, 360, 60)]
     return Polygon(c)
 
-def create_hexagons_nodes(area, boundaryShp, **kwargs):
+def create_hexagons_nodes(area=1000000, boundaryShp, **kwargs):
     
     if "side" not in kwargs:
         area = area
@@ -74,7 +74,7 @@ def create_hexagons_nodes(area, boundaryShp, **kwargs):
     if "diameter" not in kwargs:
         area = area
     else:
-        area = kwargs["diameter"]**2*3*math.sqrt(3)
+        area = kwargs["diameter"]**2*3/8*math.sqrt(3)
     
     myCRS = boundaryShp.crs
     xmin,ymin,xmax,ymax =  boundaryShp.total_bounds
