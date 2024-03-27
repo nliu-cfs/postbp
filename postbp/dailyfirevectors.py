@@ -11,6 +11,14 @@ import warnings
 warnings.filterwarnings("ignore")
 
 def angle(record):
+    """_summary_
+
+    Args:
+        record (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     x0, y0 = record['geometry_x'].x, record['geometry_x'].y
     x1, y1 = record['geometry'].x, record['geometry'].y
     x2, y2 = record['geometry_y'].x, record['geometry_y'].y
@@ -32,6 +40,8 @@ def generate_daily_vectors(fireshp, ignition, hexagons, bufferFactor=10, **kwarg
     SRID = fireshp.crs
     df = pd.DataFrame()
     dfMore = pd.DataFrame()
+    errorlog = []
+    
     for i in np.unique(fireshp['fire']):
         try: 
             fire_i = fireshp.loc[fireshp['fire'] == i]
@@ -79,9 +89,11 @@ def generate_daily_vectors(fireshp, ignition, hexagons, bufferFactor=10, **kwarg
             dfMore['fire'] = i
             dfMore['ignPt'] = pts_ni['Node_ID'].item()
             df = pd.concat([df, dfMore], sort = True)
-        except:
-            print(f'fire #{i} could not be processed')
-            pass
+        except Exception as e:
+                errorlog.append(f'{e} occurs for fire ID # {i} \n')
+        # output errorlog to a txt
+    with open("errorlog_dailyfire.txt", "w+") as f:
+        f.write(errorlog)
     return df
 
 def calc_angles(vectors, nodes, **kwargs):

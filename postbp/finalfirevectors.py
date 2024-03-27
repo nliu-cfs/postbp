@@ -40,8 +40,10 @@ def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
                 fire_vectors = pd.concat([fire_vectors, dfTemp], sort = True)
                 
             except Exception as e:
-                errorlog.append(f'{e} occurs for fire ID # {i}')
+                errorlog.append(f'{e} occurs for fire ID # {i} \n')
         # output errorlog to a txt
+        with open("errorlog_finalfire.txt", "w+") as f:
+            f.write(errorlog)
         return fire_vectors
 
 
@@ -65,8 +67,10 @@ def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
                     fire_vectors = pd.concat([fire_vectors, dfTemp], sort = True)
                 
                 except Exception as e:
-                    errorlog.append(f'{e} occurs for fire ID # {i}')
-        # output errorlog to a txt                   
+                    errorlog.append(f'{e} occurs for fire ID # {i} \n')
+        # output errorlog to a txt
+        with open("errorlog_finalfire.txt", "w+") as f:
+            f.write(errorlog)                  
         return fire_vectors
             
 def generate_fire_vectors(fireshp, ignition, hexagons, threshold = 0, loopBy = "fire", **kwargs):

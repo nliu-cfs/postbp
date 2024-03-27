@@ -87,6 +87,6 @@ nav:
           - dataloader module: dataloader.md
           - tessellation module: tessellation.md
           - finalfirevectors module: finalfirevectors.md
-          - dailyfirevectors module: dailyfirevectors.md
+        #   - dailyfirevectors module: dailyfirevectors.md
           - spreadrose module: spreadrose.md
 

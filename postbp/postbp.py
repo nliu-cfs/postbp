@@ -70,16 +70,20 @@ def generate_fireshed(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
     fireAOCshp['area_ha'] = fireAOCshp.area/10000
     return fireAOCshp
 
-def generate_fireplain(fire_vectors, AOCshp, fireshp, hexagons):
-    if len(fire_vectors.columns)==3:
-        fire_vectors.columns=['i', 'j', 'fireCount']
-    elif len(fire_vectors.columns)==4:
-        fire_vectors.columns=['i', 'j', 'fireCount', 'day']
-    else:
-        raise ValueError("please provide vector file in the format of columns: 'i', 'j', 'fire', ('day').")
-    aoc = prj2hex(AOCshp, hexagons, threshold=0)
+def generate_fireplain(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
+
+    if 'Node_ID' in kwargs:
+        hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+    fv = fire_vectors.copy()
+    if 'column_i' in kwargs:
+        fv.rename(columns={kwargs["column_i"]: 'column_i'}, inplace=True)    
+    if 'column_j' in kwargs:
+        fv.rename(columns={kwargs["column_j"]: 'column_j'}, inplace=True)
+    if 'fire_column' in kwargs:
+        fv.renmae(columns={kwargs['fire_column']: 'fire'}, inplace=True) 
+    
+    aoc = prj2hex(AOCshp, hexagon, threshold=0)
     fireAOC = fire_vectors.loc[fire_vectors['i'].isin(aoc['Node_ID'])]
-    fireAOCgr = fireAOC.groupby(['i', 'j'])[['fireCount']].count()
     fireAOCshp = fireshp.merge(fireAOC, on='fire', how='right')
     fireAOCshp['V'] = 1
     fireAOCshp = fireAOCshp.dissolve(by='V')
