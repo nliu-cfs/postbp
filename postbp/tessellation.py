@@ -64,16 +64,15 @@ def create_hexgrids(area, x, y):
     c = [[x + math.cos(math.radians(angle)) * l, y + math.sin(math.radians(angle)) * l] for angle in range(0, 360, 60)]
     return Polygon(c)
 
-def create_hexagons_nodes(area=1000000, boundaryShp, **kwargs):
+def create_hexagons_nodes(boundaryShp, **kwargs):
     
-    if "side" not in kwargs:
+    if 'area' in kwargs:
         area = area
-    else:
+
+    if "side" in kwargs:
         area = kwargs["side"]**2*3/2*math.sqrt(3)
 
-    if "diameter" not in kwargs:
-        area = area
-    else:
+    if "diameter" in kwargs:
         area = kwargs["diameter"]**2*3/8*math.sqrt(3)
     
     myCRS = boundaryShp.crs
@@ -91,17 +90,16 @@ def create_hexagons_nodes(area=1000000, boundaryShp, **kwargs):
 
     return hexagons, nodes
 
-def create_hexagons(area, boundaryShp, **kwargs):
+def create_hexagons(boundaryShp, **kwargs):
     
-    if "side" not in kwargs:
+    if 'area' in kwargs:
         area = area
-    else:
+
+    if "side" in kwargs:
         area = kwargs["side"]**2*3/2*math.sqrt(3)
 
-    if "diameter" not in kwargs:
-        area = area
-    else:
-        area = kwargs["diameter"]**2*3*math.sqrt(3)
+    if "diameter" in kwargs:
+        area = kwargs["diameter"]**2*3/8*math.sqrt(3)
     
     myCRS = boundaryShp.crs
     xmin,ymin,xmax,ymax =  boundaryShp.total_bounds
@@ -127,15 +125,18 @@ def nodes_from_hexagons(hexagons):
     return nodes
 
 def create_arcs(hexagons, **kwargs):
-    nodes = nodes_from_hexagons(hexagons)
+    if 'Node_ID' in kwargs:
+        hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+    
+    nodes = nodes_from_hexagons(hexagon)
     nodes = nodes.set_index('Node_ID')
-    SRID = hexagons.crs
-    hexagons = hexagons.set_index('Node_ID')
+    SRID = hexagon.crs
+    hexagon = hexagon.set_index('Node_ID')
 
     arcs = gpd.GeoDataFrame()
     df=gpd.GeoDataFrame()
-    for index, _ in hexagons.iterrows():
-        nnnn = hexagons[~hexagons.geometry.disjoint(hexagons.at[index,'geometry'])].index.tolist()
+    for index, _ in hexagon.iterrows():
+        nnnn = hexagon[~hexagon.geometry.disjoint(hexagon.at[index,'geometry'])].index.tolist()
         nnnn = [i for i in nnnn if index != i]
         mmmm = [index] * len(nnnn)
         mmnn = [LineString(xy) for xy in zip(nodes.loc[mmmm].geometry, nodes.loc[nnnn].geometry)]
