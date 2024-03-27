@@ -107,4 +107,4 @@ ENV/
 .vscode/
 
 # temporary added
-examples/
+docs/examples/
