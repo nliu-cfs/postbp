@@ -84,3 +84,9 @@ nav:
     - API Reference:
           - postbp module: postbp.md
           - common module: common.md
+          - dataloader module: dataloader.md
+          - tessellation module: tessellation.md
+          - finalfirevectors module: finalfirevectors.md
+          - dailyfirevectors module: dailyfirevectors.md
+          - spreadrose module: spreadrose.md
+
