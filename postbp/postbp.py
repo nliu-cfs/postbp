@@ -5,11 +5,17 @@ from postbp.common import prj2hex
 import geopandas as gpd
 
 def generate_burn_prob(fireshp, hexagons, iterations, **kwargs):
-
-    '''
-    Generate shapefile of hexagonal network with values of burn likelihood
+    """Generate shapefile of hexagonal network with values of burn likelihood
     for each hexagon on the landscape
-    '''
+
+    Args:
+        fireshp (_type_): _description_
+        hexagons (_type_): _description_
+        iterations (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
 
     if 'Node_ID' in kwargs:
         hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
@@ -27,11 +33,17 @@ def generate_burn_prob(fireshp, hexagons, iterations, **kwargs):
     return burnP
 
 def generate_ign_prob(ignition, hexagons, iterations, **kwargs):
-
-    '''
-    Generate shapefile of hexagonal network with values of ignition likelihood
+    """Generate shapefile of hexagonal network with values of ignition likelihood
     for each hexagon on the landscape
-    '''
+
+    Args:
+        ignition (_type_): _description_
+        hexagons (_type_): _description_
+        iterations (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
 
     ign = ignition.copy()
     if 'Node_ID' in kwargs:
@@ -48,10 +60,18 @@ def generate_ign_prob(ignition, hexagons, iterations, **kwargs):
     return ignGr
 
 def generate_fireshed(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
+    """Generate fire shed to an area of concern (AOC) based on the fire vectors 
 
-    '''
-    Generate fire shed to an area of concern (AOC) based on the fire vectors 
-    '''
+    Args:
+        fire_vectors (_type_): _description_
+        AOCshp (_type_): _description_
+        fireshp (_type_): _description_
+        hexagons (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
+
     if 'Node_ID' in kwargs:
         hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
     fv = fire_vectors.copy()
@@ -71,6 +91,17 @@ def generate_fireshed(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
     return fireAOCshp
 
 def generate_fireplain(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
+    """_summary_
+
+    Args:
+        fire_vectors (_type_): _description_
+        AOCshp (_type_): _description_
+        fireshp (_type_): _description_
+        hexagons (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
 
     if 'Node_ID' in kwargs:
         hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
@@ -91,9 +122,16 @@ def generate_fireplain(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
     return fireAOCshp
 
 def generate_SSR(fire_vectors, hexagons, **kwargs):
-    '''
-    Generate a shapefile with values of Source-Sink-Ratio based on the fire vectors 
-    '''
+    """Generate a shapefile with values of Source-Sink-Ratio based on the fire vectors 
+
+    Args:
+        fire_vectors (_type_): _description_
+        hexagons (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
+ 
     if 'Node_ID' in kwargs:
         hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
     fv = fire_vectors.copy()

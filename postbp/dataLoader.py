@@ -13,6 +13,11 @@ from shapely.errors import ShapelyDeprecationWarning
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
 def read_fireshp(path, *kwargs):
+    """_summary_
+
+    Args:
+        path (_type_): _description_
+    """    
      # check whether it is a daily progression shapefile
     if 'day' in kwargs:
         columns = ['fire', 'iteration', 'day']
@@ -24,6 +29,16 @@ def read_fireshp(path, *kwargs):
     return fire
       
 def read_pointcsv(path, SRID, **kwargs):
+    """_summary_
+
+    Args:
+        path (_type_): _description_
+        SRID (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
+
     if "x_col" in kwargs:
         x_coord = kwargs['x_col']
     else:
@@ -47,7 +62,15 @@ def read_pointcsv(path, SRID, **kwargs):
 
     
 def read_pointshp(path, **kwargs):
+    """_summary_
 
+    Args:
+        path (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """ 
+       
     if "x_col" in kwargs:
         x_coord = kwargs['x_col']
         

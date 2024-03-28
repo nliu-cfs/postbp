@@ -65,7 +65,14 @@ def create_hexgrids(area, x, y):
     return Polygon(c)
 
 def create_hexagons_nodes(boundaryShp, **kwargs):
-    
+    """_summary_
+
+    Args:
+        boundaryShp (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     if 'area' in kwargs:
         area = area
 
@@ -91,7 +98,14 @@ def create_hexagons_nodes(boundaryShp, **kwargs):
     return hexagons, nodes
 
 def create_hexagons(boundaryShp, **kwargs):
-    
+    """_summary_
+
+    Args:
+        boundaryShp (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     if 'area' in kwargs:
         area = area
 
@@ -117,6 +131,14 @@ def create_hexagons(boundaryShp, **kwargs):
     return hexagons
 
 def nodes_from_hexagons(hexagons):
+    """_summary_
+
+    Args:
+        hexagons (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     nodes = hexagons.copy()
     nodes['centroid'] = nodes.geometry.centroid
     nodes.drop(labels='geometry', axis=1, inplace=True)
@@ -125,6 +147,14 @@ def nodes_from_hexagons(hexagons):
     return nodes
 
 def create_arcs(hexagons, **kwargs):
+    """_summary_
+
+    Args:
+        hexagons (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     if 'Node_ID' in kwargs:
         hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
     

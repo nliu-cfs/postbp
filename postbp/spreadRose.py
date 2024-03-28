@@ -7,6 +7,14 @@ from shapely.geometry import LineString
 from matplotlib import pyplot as plt
 
 def angle_from_pij(record):
+    """_summary_
+
+    Args:
+        record (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     x0, y0 = record['geometry_x'].x, record['geometry_x'].y
     x1, y1 = record['geometry_y'].x, record['geometry_y'].y
     dy = y0 - y1
@@ -18,6 +26,15 @@ def angle_from_pij(record):
     return angle
 
 def angle_from_2pts(p1, p2):
+    """_summary_
+
+    Args:
+        p1 (_type_): _description_
+        p2 (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     x0, y0 = p1['geometry'].x,p1['geometry'].y
     x1, y1 = p2['geometry'].x, p2['geometry'].y
     dy = y0 - y1
@@ -29,6 +46,15 @@ def angle_from_2pts(p1, p2):
     return angle
 
 def generate_fire_rose(pijVectors, nodes, **kwargs):
+    """_summary_
+
+    Args:
+        pijVectors (_type_): _description_
+        nodes (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     if 'Node_ID' in kwargs:
         node = nodes.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
     pij = pijVectors.copy()  

@@ -79,8 +79,8 @@ nav:
     - FAQ: faq.md
     - Changelog: changelog.md
     - Report Issues: https://github.com/nliu-cfs/postbp/issues
-    - Examples:
-        - examples/intro.ipynb
+    # - Examples:
+    #     - examples/intro.ipynb
     - API Reference:
           - postbp module: postbp.md
           - common module: common.md

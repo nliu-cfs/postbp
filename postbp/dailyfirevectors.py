@@ -11,7 +11,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 def angle(record):
-    """_summary_
+    """Calculate angle from three points: ignition point and the points where fire spread from and to.  
 
     Args:
         record (_type_): _description_
@@ -28,11 +28,22 @@ def angle(record):
     deg2 = (360 + degrees(atan2(xv2, yv2))) % 360
     return deg2 - deg1 if deg1 <= deg2 else 360 - (deg1 - deg2)
 
-''' bufferFactor - convert ignition point into a circle polygon of the diameter of bufferFactor
-it shall be small enough so as not to have ignition point locates in more than one hexagons
-it also defines threshold for the minimum area of fire perimeter to be in a hexagon to be regarded as burned
-'''
+
+
 def generate_daily_vectors(fireshp, ignition, hexagons, bufferFactor=10, **kwargs):
+    """_summary_
+
+    Args:
+        fireshp (_type_): _description_
+        ignition (_type_): _description_
+        hexagons (_type_): _description_
+        bufferFactor (int, optional): convert ignition point into a circle polygon of the diameter of bufferFactor
+it shall be small enough so as not to have ignition point locates in more than one hexagons it also defines threshold for the minimum area of fire perimeter to be in a hexagon to be regarded as burned. Defaults to 10.
+
+    Returns:
+        _type_: _description_
+    """    
+    
     if 'Node_ID' in kwargs:
         hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
 
@@ -97,6 +108,15 @@ def generate_daily_vectors(fireshp, ignition, hexagons, bufferFactor=10, **kwarg
     return df
 
 def calc_angles(vectors, nodes, **kwargs):
+    """_summary_
+
+    Args:
+        vectors (_type_): _description_
+        nodes (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
 
     if 'Node_ID' in kwargs:
         node = nodes.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
@@ -120,6 +140,15 @@ def calc_angles(vectors, nodes, **kwargs):
     return vectorsW
 
 def select_angle(vectors, alpha):
+    """_summary_
+
+    Args:
+        vectors (_type_): _description_
+        alpha (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
     maxAngle = alpha/2+180
     minAngle = 180-alpha/2
     vectorsV = vectors.copy()

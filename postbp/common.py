@@ -4,10 +4,18 @@ import geopandas as gpd
 from shapely.geometry import LineString #, Polygon, Point
 
 def prj2hex(shp0, hexagons, threshold=0):
-    '''
-    Generate intersection shape by overlaying shapefile shp0 and the hexagon shapefile
+    """Generate intersection shape by overlaying shapefile shp0 and the hexagon shapefile
     option to set threshold
-    '''
+
+    Args:
+        shp0 (type:GeoDataFrame): _description_
+        hexagons (GeoDataFrame): hexagonal patches
+        threshold (int, optional): _description_. Defaults to 0.
+
+    Returns:
+        GeoDataFrame: _description_
+    """    
+    
     shp1 = gpd.overlay(shp0, hexagons, how='intersection') 
     shp1['areaFire'] = shp1.geometry.area
     shp1 = shp1.loc[shp1['areaFire'] > threshold]
@@ -15,9 +23,16 @@ def prj2hex(shp0, hexagons, threshold=0):
     return shp1
 
 def pij_to_shp(pij_input, nodes, **kwargs):
-    '''
-    Generate shapefile of lines connecting i and j, with column indicating probability of spread
-    '''
+    """Generate shapefile of lines connecting i and j, with column indicating probability of spread
+
+    Args:
+        pij_input (_type_): _description_
+        nodes (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
+    
     pij = pij_input.copy()
 
     if 'Node_ID' in kwargs:

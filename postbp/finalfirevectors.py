@@ -16,7 +16,19 @@ from shapely.errors import ShapelyDeprecationWarning
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
 def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
-    
+    """_summary_
+
+    Args:
+        fireshp (_type_): _description_
+        ignition (_type_): _description_
+        hexagon (_type_): _description_
+        threshold (int, optional): _description_. Defaults to 0.
+        iteration (bool, optional): _description_. Defaults to False.
+
+    Returns:
+        _type_: _description_
+    """    
+
     # make sure hexagons, fireShp and ignition point shapefile are in the same projection
     ignition = ignition.to_crs(fireshp.crs)
     hexagon = hexagon.to_crs(fireshp.crs)
@@ -74,6 +86,19 @@ def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
         return fire_vectors
             
 def generate_fire_vectors(fireshp, ignition, hexagons, threshold = 0, loopBy = "fire", **kwargs):
+    """_summary_
+
+    Args:
+        fireshp (_type_): _description_
+        ignition (_type_): _description_
+        hexagons (_type_): _description_
+        threshold (int, optional): _description_. Defaults to 0.
+        loopBy (str, optional): _description_. Defaults to "fire".
+
+    Returns:
+        _type_: _description_
+    """    
+
     if 'Node_ID' in kwargs:
         hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
     
@@ -94,6 +119,15 @@ def generate_fire_vectors(fireshp, ignition, hexagons, threshold = 0, loopBy = "
     return fire_vectors
 
 def pij_from_vectors(vectors, iterations):
+    """_summary_
+
+    Args:
+        vectors (_type_): _description_
+        iterations (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """    
 
     fire_pij = vectors.groupby(['desti', 'origi'])[['fire']].count()
     fire_pij.reset_index(inplace = True)
