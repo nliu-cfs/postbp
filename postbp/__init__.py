@@ -8,7 +8,7 @@ from postbp.common import (
     prj2hex,  #noqa
     pij_to_shp, #noqa
 )
-from postbp.dataLoader import(
+from postbp.dataloader import(
     read_fireshp,  #noqa
     read_pointcsv,   #noqa
     read_pointshp,   #noqa
@@ -22,7 +22,7 @@ from postbp.postbp import (
     generate_fireplain,  #noqa
 )
 
-from postbp.spreadRose import (
+from postbp.spreadrose import (
     generate_fire_rose,  #noqa
     plot_rose,   #noqa
 )
@@ -32,3 +32,6 @@ from postbp.tessellation import (
     nodes_from_hexagons,  #noqa
     create_hexagons,   #noqa
 )
+
+from postbp.finalfirevectors import *
+from postbp.dailyfirevectors import *
