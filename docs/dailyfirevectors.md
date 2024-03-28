@@ -1,4 +1,3 @@
- 
 # dailyfirevectors module
 
 ::: postbp.dailyfirevectors
