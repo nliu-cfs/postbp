@@ -33,5 +33,5 @@ from .tessellation import (
     create_hexagons,   #noqa
 )
 
-from .finalfirevectors import *
-from .dailyfirevectors import *
+from .finalfirevectors import *    #noqa
+from .dailyfirevectors import *    #noqa
