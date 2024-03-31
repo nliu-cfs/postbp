@@ -9,7 +9,7 @@
 '''
 import geopandas as gpd
 import pandas as pd
-from postbp.common import prj2hex
+from .common import prj2hex
 import warnings
 warnings.filterwarnings("ignore")
 from shapely.errors import ShapelyDeprecationWarning

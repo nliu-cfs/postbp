@@ -4,7 +4,7 @@ __author__ = """Ning Liu"""
 __email__ = "ning.liu@nrcan-rncan.gc.ca"
 __version__ = "0.0.3"
 
-from postbp.common import (
+from .common import (
     prj2hex,  #noqa
     pij_to_shp, #noqa
 )

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import itertools
 from math import atan2, degrees
-from common import prj2hex
+from .common import prj2hex
 import warnings
 warnings.filterwarnings("ignore")
 

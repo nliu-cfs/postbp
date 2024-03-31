@@ -1,7 +1,7 @@
 """Main module."""
 
 import numpy as np
-from postbp.common import prj2hex
+from .common import prj2hex
 import geopandas as gpd
 
 def generate_burn_prob(fireshp, hexagons, iterations, **kwargs):
