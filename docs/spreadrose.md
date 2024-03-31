@@ -1,4 +1,0 @@
- 
-# spreadrose module
-
-::: postbp.spreadrose
