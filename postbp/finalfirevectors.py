@@ -14,6 +14,7 @@ import warnings
 warnings.filterwarnings("ignore")
 from shapely.errors import ShapelyDeprecationWarning
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
+import tqdm
 
 def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
     """_summary_
@@ -37,7 +38,7 @@ def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
     errorlog = []
 
     if not iteration:
-        for i in fireshp['fire']:
+        for i in tqdm(fireshp['fire']):
             try:
                 fire_i = fireshp.loc[fireshp['fire'] == i]
                 fire_ni = prj2hex(fire_i, hexagon, threshold)                        
@@ -60,7 +61,7 @@ def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
 
 
     if iteration:
-        for j in set(fireshp['iteration']):
+        for j in tqdm(set(fireshp['iteration'])):
             fire_j = fireshp.loc[fireshp['iteration'] == j]
             pts_j = ignition.loc[ignition['iteration'] == j]
             

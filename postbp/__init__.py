@@ -17,7 +17,7 @@ from .dataloader import(
 from .postbp import (
     generate_ign_prob,  #noqa
     generate_burn_prob,  #noqa
-    generate_SSR,  #noqa
+    generate_ssr,  #noqa
     generate_fireshed,   #noqa
     generate_fireplain,  #noqa
 )
@@ -34,5 +34,12 @@ from .tessellation import (
     create_hexagons,   #noqa
 )
 
-from .finalfirevectors import *    #noqa
-from .dailyfirevectors import *    #noqa
+from .finalfirevectors import (
+    generate_fire_vectors,    #noqa
+    pij_from_vectors,      #noqa
+)
+from .dailyfirevectors import (
+    generate_daily_vectors,    #noqa
+    calc_angles,        #noqa
+    select_angle,       #noqa
+)

@@ -1,10 +1,10 @@
 from windrose import WindroseAxes
 import matplotlib.cm as cm
-import pandas as pd
 import geopandas as gpd
 from math import atan2, degrees
 from shapely.geometry import LineString 
 from matplotlib import pyplot as plt
+import tqdm
 
 def angle_from_pij(record):
     """_summary_
@@ -62,7 +62,7 @@ def generate_fire_rose(pijVectors, nodes, **kwargs):
     pij = node.merge(pij, left_on = 'Node_ID', right_on = 'column_i', how = 'right')
     pij = pij.merge(node, left_on = 'column_j', right_on = 'Node_ID', how = 'left')    
     pij.drop(labels = ['Node_ID_x', 'Node_ID_y'], axis = 1, inplace = True)
-    for index, row in pij.iterrows():
+    for index, row in tqdm(pij.iterrows()):
         pij.at[index, 'angle'] = angle_from_pij(row)
     dffLine = [LineString(xy) for xy in zip(pij['geometry_x'], pij['geometry_y'])]
     pij = gpd.GeoDataFrame(pij, crs = node.crs, geometry = dffLine )

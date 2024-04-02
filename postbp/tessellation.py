@@ -10,10 +10,10 @@
 
 import geopandas as gpd
 from shapely.geometry import Polygon, Point, LineString
-import pandas as pd
 import warnings
 warnings.filterwarnings("ignore")
 import math
+import tqdm
 
 def create_hexnodes(area, xmin, ymin, xmax, ymax):
     nodes = []
@@ -74,7 +74,7 @@ def create_hexagons_nodes(boundaryShp, **kwargs):
         _type_: _description_
     """    
     if 'area' in kwargs:
-        area = area
+        area = kwargs['area']
 
     if "side" in kwargs:
         area = kwargs["side"]**2*3/2*math.sqrt(3)
@@ -107,7 +107,7 @@ def create_hexagons(boundaryShp, **kwargs):
         _type_: _description_
     """    
     if 'area' in kwargs:
-        area = area
+        area = kwargs['area']
 
     if "side" in kwargs:
         area = kwargs["side"]**2*3/2*math.sqrt(3)
@@ -165,7 +165,7 @@ def create_arcs(hexagons, **kwargs):
 
     arcs = gpd.GeoDataFrame()
     df=gpd.GeoDataFrame()
-    for index, _ in hexagon.iterrows():
+    for index, _ in tqdm(hexagon.iterrows()):
         nnnn = hexagon[~hexagon.geometry.disjoint(hexagon.at[index,'geometry'])].index.tolist()
         nnnn = [i for i in nnnn if index != i]
         mmmm = [index] * len(nnnn)

@@ -8,7 +8,13 @@ To install postbp, run this command in your terminal:
 pip install postbp
 ```
 
-This is the preferred method to install postbp, as it will always install the most recent stable release.
+This is the preferred method to install postbp.
+
+To upgrade postbp to a newer release, run this command in your terminal:
+
+```
+pip install postbp --upgrade
+```
 
 If you don't have [pip](https://pip.pypa.io) installed, this [Python installation guide](http://docs.python-guide.org/en/latest/starting/installation/) can guide you through the process.
 

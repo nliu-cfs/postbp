@@ -4,3 +4,4 @@ geopandas
 shapely
 windrose
 matplotlib
+tqdm

@@ -121,7 +121,7 @@ def generate_fireplain(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
     fireAOCshp['area_ha'] = fireAOCshp.area/10000
     return fireAOCshp
 
-def generate_SSR(fire_vectors, hexagons, **kwargs):
+def generate_ssr(fire_vectors, hexagons, **kwargs):
     """Generate a shapefile with values of Source-Sink-Ratio based on the fire vectors 
 
     Args:

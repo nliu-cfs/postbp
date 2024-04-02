@@ -9,6 +9,7 @@ from math import atan2, degrees
 from .common import prj2hex
 import warnings
 warnings.filterwarnings("ignore")
+import tqdm
 
 def angle(record):
     """Calculate angle from three points: ignition point and the points where fire spread from and to.  
@@ -53,7 +54,7 @@ it shall be small enough so as not to have ignition point locates in more than o
     dfMore = pd.DataFrame()
     errorlog = []
     
-    for i in np.unique(fireshp['fire']):
+    for i in tqdm(np.unique(fireshp['fire'])):
         try: 
             fire_i = fireshp.loc[fireshp['fire'] == i]
             pts_i = ignition.loc[ignition['fire'] == i]
@@ -129,7 +130,7 @@ def calc_angles(vectors, nodes, **kwargs):
 
     #### note that 'geometry_x':origin; 'geometry_y':destination; 'geometry':ignition
 
-    for index, row in vectorsW.iterrows():
+    for index, row in tqdm(vectorsW.iterrows()):
         try: 
             vectorsW.at[index, 'angle'] = angle(row)
         except:
