@@ -13,7 +13,7 @@ from shapely.geometry import Polygon, Point, LineString
 import warnings
 warnings.filterwarnings("ignore")
 import math
-import tqdm
+from tqdm import tqdm
 
 def create_hexnodes(area, xmin, ymin, xmax, ymax):
     nodes = []

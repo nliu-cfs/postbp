@@ -4,7 +4,7 @@ import geopandas as gpd
 from math import atan2, degrees
 from shapely.geometry import LineString 
 from matplotlib import pyplot as plt
-import tqdm
+from tqdm import tqdm
 
 def angle_from_pij(record):
     """_summary_
@@ -56,9 +56,13 @@ def generate_fire_rose(pijVectors, nodes, **kwargs):
         _type_: _description_
     """    
     node = nodes.copy()
+    pij = pijVectors.copy() 
     if 'Node_ID' in kwargs:
         node = node.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
-    pij = pijVectors.copy()  
+    if 'column_i' in kwargs:
+        pij.rename(columns={kwargs["column_i"]: 'column_i'}, inplace=True)    
+    if 'column_j' in kwargs:
+        pij.rename(columns={kwargs["column_j"]: 'column_j'}, inplace=True)     
 
     pij = node.merge(pij, left_on = 'Node_ID', right_on = 'column_i', how = 'right')
     pij = pij.merge(node, left_on = 'column_j', right_on = 'Node_ID', how = 'left')    
@@ -70,20 +74,19 @@ def generate_fire_rose(pijVectors, nodes, **kwargs):
     pij.drop(labels = ['geometry_x', 'geometry_y'], axis = 1, inplace = True)
     pij['len'] = pij.geometry.length
     pij['pij'] = pij['pij'].astype(float)
-    pij['pij_len'] = pij['pij']*pij['len']
     return pij
 
 def plot_rose(pijRose, column='pij', save = False):
     if save:
-        plt.rcParams.update({'font.size': 20})
+        plt.rcParams.update({'font.size': 20,"legend.frameon":False})
         ax = WindroseAxes.from_ax()
         ax.bar(pijRose['angle'], pijRose[column], normed=True, blowto=False, cmap=cm.Set2, opening=0.8, edgecolor='white')
-        ax.set_legend(fontsize="20",loc=(1.01, 0.01),frameon=False)
+        ax.set_legend(fontsize="20",loc=(1.01, 0.01))
         plt.savefig(column + 'Rose.png', bbox_inches='tight', pad_inches=.1, transparent=False)
         plt.close()
     else:
-        plt.rcParams.update({'font.size': 20})
+        plt.rcParams.update({'font.size': 20,"legend.frameon":False})
         ax = WindroseAxes.from_ax()
         ax.bar(pijRose['angle'], pijRose[column], normed=True, blowto=False, cmap=cm.Set2, opening=0.8, edgecolor='white')
-        ax.set_legend(fontsize="20",loc=(1.01, 0.01),frameon=False)
+        ax.set_legend(fontsize="20",loc=(1.01, 0.01))
         plt.show()

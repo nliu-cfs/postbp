@@ -14,7 +14,7 @@ import warnings
 warnings.filterwarnings("ignore")
 from shapely.errors import ShapelyDeprecationWarning
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
-import tqdm
+from tqdm import tqdm
 
 def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
     """_summary_
@@ -35,7 +35,6 @@ def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
     hexagon = hexagon.to_crs(fireshp.crs)
 
     fire_vectors = pd.DataFrame()
-    errorlog = []
 
     if not iteration:
         for i in tqdm(fireshp['fire']):
@@ -53,10 +52,8 @@ def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
                 fire_vectors = pd.concat([fire_vectors, dfTemp], sort = True)
                 
             except Exception as e:
-                errorlog.append(f'{e} occurs for fire ID # {i} \n')
-        # output errorlog to a txt
-        with open("errorlog_finalfire.txt", "w+") as f:
-            f.write(errorlog)
+                with open("errorlog_finalfire.txt", "w+") as f:
+                    f.write(f'{e} occurs for fire ID # {i} \n')   
         return fire_vectors
 
 
@@ -80,10 +77,8 @@ def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
                     fire_vectors = pd.concat([fire_vectors, dfTemp], sort = True)
                 
                 except Exception as e:
-                    errorlog.append(f'{e} occurs for fire ID # {i} \n')
-        # output errorlog to a txt
-        with open("errorlog_finalfire.txt", "w+") as f:
-            f.write(errorlog)                  
+                    with open("errorlog_finalfire.txt", "w+") as f:
+                        f.write(f'{e} occurs for fire ID # {i} \n')                         
         return fire_vectors
             
 def generate_fire_vectors(fireshp, ignition, hexagons, threshold = 0, loopBy = "fire", **kwargs):
@@ -136,5 +131,7 @@ def pij_from_vectors(vectors, iterations):
     fire_pij['pij'] = fire_pij['fire'] / iterations
     fire_pij['pij'] = fire_pij['pij'].round(5)
     fire_pij['pij'] = fire_pij['pij'].apply(lambda x: '%.5f' % x)
-    
+    fire_pij.rename(columns={'fire':'firecounts'},inplace=True)
+    fire_pij.sort_values(by = ['firecounts'], inplace = True)
+    fire_pij.reset_index(drop=True, inplace=True)
     return fire_pij

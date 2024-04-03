@@ -9,7 +9,7 @@ from math import atan2, degrees
 from .common import prj2hex
 import warnings
 warnings.filterwarnings("ignore")
-import tqdm
+from tqdm import tqdm
 
 def angle(record):
     """Calculate angle from three points: ignition point and the points where fire spread from and to.  
@@ -52,7 +52,6 @@ it shall be small enough so as not to have ignition point locates in more than o
     SRID = fireshp.crs
     df = pd.DataFrame()
     dfMore = pd.DataFrame()
-    errorlog = []
     
     for i in tqdm(np.unique(fireshp['fire'])):
         try: 
@@ -102,10 +101,8 @@ it shall be small enough so as not to have ignition point locates in more than o
             dfMore['ignPt'] = pts_ni['Node_ID'].item()
             df = pd.concat([df, dfMore], sort = True)
         except Exception as e:
-                errorlog.append(f'{e} occurs for fire ID # {i} \n')
-        # output errorlog to a txt
-    with open("errorlog_dailyfire.txt", "w+") as f:
-        f.write(errorlog)
+            with open("errorlog_dailyfire.txt", "w+") as f:
+                f.write(f'{e} occurs for fire ID # {i} \n')    
     return df
 
 def calc_angles(vectors, nodes, **kwargs):

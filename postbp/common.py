@@ -47,5 +47,5 @@ def pij_to_shp(pij_input, nodes, **kwargs):
     pij = pij.merge(node, left_on='column_j', right_on='Node_ID', how='left')
     pijLine = [LineString(xy) for xy in zip(pij['geometry_x'], pij['geometry_y'])]
     pijshp = gpd.GeoDataFrame(pij, crs = SRID, geometry = pijLine )
-    pijshp.drop(labels = ['geometry_x', 'geometry_y'], axis = 1, inplace = True)
+    pijshp.drop(labels = ['geometry_x', 'geometry_y', 'Node_ID_x', 'Node_ID_y'], axis = 1, inplace = True)
     return pijshp
