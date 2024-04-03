@@ -99,9 +99,9 @@ def generate_fire_vectors(fireshp, ignition, hexagons, threshold = 0, loopBy = "
     Returns:
         _type_: _description_
     """    
-
+    hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:
-        hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+        hexagon = hexagon.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
     
     if loopBy == "iteration":
         fire_vectors = spatial_join(fireshp, ignition, hexagon, threshold, iteration=True)
@@ -116,7 +116,7 @@ def generate_fire_vectors(fireshp, ignition, hexagons, threshold = 0, loopBy = "
     fire_vectors['Node_ID_y'] = fire_vectors['Node_ID_y'].astype(int)
     
     fire_vectors.columns = ['Node_ID_x', 'Node_ID_y', 'fire', 'iteration']
-    fire_vectors.rename(columns={'Node_ID_x':'desti', 'Node_ID_y':'origi'}, inplace=True)
+    fire_vectors.rename(columns={'Node_ID_x':'column_j', 'Node_ID_y':'column_i'}, inplace=True)
     return fire_vectors
 
 def pij_from_vectors(vectors, iterations):
@@ -130,9 +130,9 @@ def pij_from_vectors(vectors, iterations):
         _type_: _description_
     """    
 
-    fire_pij = vectors.groupby(['desti', 'origi'])[['fire']].count()
+    fire_pij = vectors.groupby(['column_j', 'column_i'])[['fire']].count()
     fire_pij.reset_index(inplace = True)
-    fire_pij = fire_pij.drop(fire_pij[fire_pij['desti'] == fire_pij['origi']].index)
+    fire_pij = fire_pij.drop(fire_pij[fire_pij['column_j'] == fire_pij['column_i']].index)
     fire_pij['pij'] = fire_pij['fire'] / iterations
     fire_pij['pij'] = fire_pij['pij'].round(5)
     fire_pij['pij'] = fire_pij['pij'].apply(lambda x: '%.5f' % x)

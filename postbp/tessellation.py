@@ -155,9 +155,10 @@ def create_arcs(hexagons, **kwargs):
     Returns:
         _type_: _description_
     """    
+    hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:
-        hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
-    
+        hexagon = hexagon.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+        
     nodes = nodes_from_hexagons(hexagon)
     nodes = nodes.set_index('Node_ID')
     SRID = hexagon.crs

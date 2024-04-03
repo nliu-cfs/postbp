@@ -34,9 +34,9 @@ def pij_to_shp(pij_input, nodes, **kwargs):
     """    
     
     pij = pij_input.copy()
-
+    node = nodes.copy()
     if 'Node_ID' in kwargs:
-        node = nodes.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+        node = node.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
     if 'column_i' in kwargs:
         pij.rename(columns={kwargs["column_i"]: 'column_i'}, inplace=True)    
     if 'column_j' in kwargs:

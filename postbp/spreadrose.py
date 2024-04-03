@@ -55,8 +55,9 @@ def generate_fire_rose(pijVectors, nodes, **kwargs):
     Returns:
         _type_: _description_
     """    
+    node = nodes.copy()
     if 'Node_ID' in kwargs:
-        node = nodes.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+        node = node.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
     pij = pijVectors.copy()  
 
     pij = node.merge(pij, left_on = 'Node_ID', right_on = 'column_i', how = 'right')

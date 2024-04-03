@@ -16,9 +16,9 @@ def generate_burn_prob(fireshp, hexagons, iterations, **kwargs):
     Returns:
         _type_: _description_
     """    
-
+    hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:
-        hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+        hexagon = hexagon.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
 
     fireOL = prj2hex(fireshp, hexagon, threshold=0)
     if 'fire_column' in kwargs:
@@ -46,8 +46,9 @@ def generate_ign_prob(ignition, hexagons, iterations, **kwargs):
     """    
 
     ign = ignition.copy()
+    hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:
-        hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+        hexagon = hexagon.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
     if 'fire_column' in kwargs:
         ign.rename(columns={kwargs["fire_column"]: 'fire'}, inplace=True)    
 
@@ -71,9 +72,9 @@ def generate_fireshed(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
     Returns:
         _type_: _description_
     """    
-
+    hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:
-        hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+        hexagon = hexagon.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
     fv = fire_vectors.copy()
     if 'column_i' in kwargs:
         fv.rename(columns={kwargs["column_i"]: 'column_i'}, inplace=True)    
@@ -102,9 +103,9 @@ def generate_fireplain(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
     Returns:
         _type_: _description_
     """
-
+    hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:
-        hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+        hexagon = hexagon.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
     fv = fire_vectors.copy()
     if 'column_i' in kwargs:
         fv.rename(columns={kwargs["column_i"]: 'column_i'}, inplace=True)    
@@ -131,9 +132,9 @@ def generate_ssr(fire_vectors, hexagons, **kwargs):
     Returns:
         _type_: _description_
     """    
- 
+    hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:
-        hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+        hexagon = hexagon.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
     fv = fire_vectors.copy()
     if 'column_i' in kwargs:
         fv.rename(columns={kwargs["column_i"]: 'column_i'}, inplace=True)    

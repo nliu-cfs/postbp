@@ -44,10 +44,10 @@ it shall be small enough so as not to have ignition point locates in more than o
     Returns:
         _type_: _description_
     """    
-    
+    hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:
-        hexagon = hexagons.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
-
+        hexagon = hexagon.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+    
     threshold = 3.1415926*bufferFactor**2 - 1 
     SRID = fireshp.crs
     df = pd.DataFrame()
@@ -118,9 +118,9 @@ def calc_angles(vectors, nodes, **kwargs):
     Returns:
         _type_: _description_
     """    
-
+    node = nodes.copy()
     if 'Node_ID' in kwargs:
-        node = nodes.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
+        node = node.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
 
     vectorsW = vectors.copy()
     vectorsW = node.merge(vectors, left_on='Node_ID', right_on='column_i', how='right')
