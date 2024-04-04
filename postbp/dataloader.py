@@ -12,14 +12,14 @@ import warnings
 from shapely.errors import ShapelyDeprecationWarning
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
-def read_fireshp(path, *kwargs):
+def read_fireshp(path, daily=False):
     """_summary_
 
     Args:
         path (_type_): _description_
     """    
      # check whether it is a daily progression shapefile
-    if 'day' in kwargs:
+    if daily:
         columns = ['fire', 'iteration', 'day']
     else:
         columns = ['fire', 'iteration']
