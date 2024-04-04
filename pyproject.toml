@@ -1,6 +1,6 @@
 [project]
 name = "postbp"
-version = "0.1.2"
+version = "1.0.0"
 dynamic = [
     "dependencies",
 ]
@@ -52,7 +52,7 @@ universal = true
 
 
 [tool.bumpversion]
-current_version = "0.1.2"
+current_version = "1.0.0"
 commit = true
 tag = true
 
