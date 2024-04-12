@@ -4,7 +4,7 @@
     else, using spatialjoin_fire
 
 2. user confirm whether is processing spreading by day data:
-    if yes, using module daily_progression
+    if yes, using module dailyfirevectors
     else, current module suffices
 '''
 import geopandas as gpd
@@ -17,17 +17,17 @@ warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 from tqdm import tqdm
 
 def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
-    """_summary_
+    """Project fire perimeter and ignition points to the hexagonal network
 
     Args:
-        fireshp (_type_): _description_
-        ignition (_type_): _description_
-        hexagon (_type_): _description_
-        threshold (int, optional): _description_. Defaults to 0.
-        iteration (bool, optional): _description_. Defaults to False.
+        fireshp (GeoDataFrame): fire perimeter dataset with fire ID (and iteration ID) and geometry
+        ignition (GeoDataFrame): igntion points geodataframe
+        hexagons (GeoDataFrame): geometry of hexagonal patches with ID field
+        threshold (float, optional): Value between 0 and 1. The proportion for classifying hexagon as intersecting with shp0. Defaults to 0.
+        iteration (bool, optional): Defaults to False. If multiple fires in each iteration, then set value to True
 
     Returns:
-        _type_: _description_
+        GeoDataFrame: igntion point, starting point and destination point of each fire being identified with hexagon ID
     """    
 
     # make sure hexagons, fireShp and ignition point shapefile are in the same projection
@@ -85,9 +85,9 @@ def generate_fire_vectors(fireshp, ignition, hexagons, threshold = 0, loopBy = "
     """_summary_
 
     Args:
-        fireshp (_type_): _description_
+        fireshp (GeoDataFrame): fire perimeter dataset with fire ID (and iteration ID) and geometry
         ignition (_type_): _description_
-        hexagons (_type_): _description_
+        hexagons (GeoDataFrame): geometry of hexagonal patches with ID field
         threshold (int, optional): _description_. Defaults to 0.
         loopBy (str, optional): _description_. Defaults to "fire".
 
@@ -119,7 +119,7 @@ def pij_from_vectors(vectors, iterations):
 
     Args:
         vectors (_type_): _description_
-        iterations (_type_): _description_
+        iterations (int): number of iterations
 
     Returns:
         _type_: _description_

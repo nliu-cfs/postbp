@@ -12,11 +12,14 @@ import warnings
 from shapely.errors import ShapelyDeprecationWarning
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
-def read_fireshp(path, daily=False):
-    """_summary_
+def read_fireshp(path_n_file_name, daily=False):
+    """Load the files with the final and daily fire perimeters and prepares the data
 
     Args:
-        path (_type_): _description_
+        path_n_file_name (string): path and file name of fire perimeter shapefile
+
+    Returns:
+        GeoDataFrame: ignition point fire ID and geometry
     """    
      # check whether it is a daily progression shapefile
     if daily:
@@ -24,19 +27,19 @@ def read_fireshp(path, daily=False):
     else:
         columns = ['fire', 'iteration']
 
-    fire = gpd.read_file(path, columns=columns, driver = 'ESRI Shapefile')
+    fire = gpd.read_file(path_n_file_name, columns=columns, driver = 'ESRI Shapefile')
     
     return fire
       
-def read_pointcsv(path, SRID, **kwargs):
-    """_summary_
+def read_pointcsv(path_n_file_name, SRID, **kwargs):
+    """Load the fire ignition points if this information is provided as a comma-delimited .csv file
 
     Args:
-        path (_type_): _description_
-        SRID (_type_): _description_
+        path_n_file_name (string): path and file name of fire ignition points shapefile
+        SRID (CRS): spatial reference identifiers (SRID) 
 
     Returns:
-        _type_: _description_
+        GeoDataFrame: ignition point fire ID and geometry
     """    
 
     if "x_col" in kwargs:
@@ -50,25 +53,22 @@ def read_pointcsv(path, SRID, **kwargs):
         y_coord = 'y_coord'
 
     #### read in BurnP-3 output ignition point csv file
-    points = pd.read_csv(path)
+    points = pd.read_csv(path_n_file_name)
     points['geometry'] = [Point(xy) for xy in zip(points[x_coord], points[y_coord])]
     # note: make sure ignition points and fire shape are of the same projection, below it directly set by prj
     points = gpd.GeoDataFrame(points, crs = SRID, geometry = points['geometry'] )
-    if 'day' in kwargs:
-        points = points[['fire', 'iteration', 'day', 'geometry']]
-    else:
-        points = points[['fire', 'iteration', 'geometry']]
+    points = points[['fire', 'iteration', 'geometry']]
     return points
 
     
-def read_pointshp(path, **kwargs):
-    """_summary_
+def read_pointshp(path_n_file_name, **kwargs):
+    """Load the ignition points if the data is provided as X-Y coordinates in separate columns in the attribute table of the ESRI shapefile with fire perimeters (or in a separate ESRI point shapefile)
 
     Args:
-        path (_type_): _description_
+        path_n_file_name (string): path and file name of fire ignition points shapefile
 
     Returns:
-        _type_: _description_
+        GeoDataFrame: ignition point fire ID and geometry
     """ 
        
     if "x_col" in kwargs:
@@ -83,7 +83,7 @@ def read_pointshp(path, **kwargs):
         y_coord = 'y_coord'
         
     #### read in BurnP-3 output ignition point csv file
-    points = gpd.read_file(path, driver='ESRI Shapefile')
+    points = gpd.read_file(path_n_file_name, driver='ESRI Shapefile')
     ## check geometry to be point or polygon
 
     if points.geom_type.str.contains("Point").all():
@@ -99,4 +99,17 @@ def read_pointshp(path, **kwargs):
         points = points[['fire', 'iteration', 'geometry']]
 
     return points
+
+def validify_fireshp(fireshp):
+    """if encounter error message of ''
+
+    Args:
+        fireshp (GeoDataFrame): fire perimeter dataset with fire ID (and iteration ID) and geometry
+
+    Returns:
+        _type_: _description_
+    """    
+    from shapely.validation import make_valid
+    fireshp.geometry = fireshp.apply(lambda row: make_valid(row.geometry) if not row.geometry.is_valid else row.geometry, axis=1)
+    return fireshp
 

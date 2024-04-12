@@ -9,18 +9,22 @@ def generate_burn_prob(fireshp, hexagons, iterations, **kwargs):
     for each hexagon on the landscape
 
     Args:
-        fireshp (_type_): _description_
-        hexagons (_type_): _description_
-        iterations (_type_): _description_
+        fireshp (GeoDataFrame): fire perimeter dataset with fire ID (and iteration ID) and geometry
+        hexagons (GeoDataFrame): geometry of hexagonal patches with ID field
+        iterations (int): number of iterations
 
     Returns:
-        _type_: _description_
+        GeoDataFrame: return a GeoDataFrame containing burn probability value at each hexagonal patches
     """    
+    if 'threshold' in kwargs:
+        threshold = kwargs['threshold']
+    else:
+        threshold = 0
     hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:
         hexagon = hexagon.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
 
-    fireOL = prj2hex(fireshp, hexagon, threshold=0)
+    fireOL = prj2hex(fireshp, hexagon, threshold=threshold)
     if 'fire_column' in kwargs:
         fireOL.rename(columns={kwargs["fire_column"]: 'fire'}, inplace=True) 
        
@@ -38,9 +42,8 @@ def generate_ign_prob(ignition, hexagons, iterations, **kwargs):
 
     Args:
         ignition (_type_): _description_
-        hexagons (_type_): _description_
-        iterations (_type_): _description_
-
+        hexagons (GeoDataFrame): geometry of hexagonal patches with ID field
+        iterations (int): number of iterations
     Returns:
         _type_: _description_
     """    
@@ -66,8 +69,8 @@ def generate_fireshed(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
     Args:
         fire_vectors (_type_): _description_
         AOCshp (_type_): _description_
-        fireshp (_type_): _description_
-        hexagons (_type_): _description_
+        fireshp (GeoDataFrame): fire perimeter dataset with fire ID (and iteration ID) and geometry
+        hexagons (GeoDataFrame): geometry of hexagonal patches with ID field
 
     Returns:
         _type_: _description_
@@ -97,8 +100,8 @@ def generate_fireplain(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
     Args:
         fire_vectors (_type_): _description_
         AOCshp (_type_): _description_
-        fireshp (_type_): _description_
-        hexagons (_type_): _description_
+        fireshp (GeoDataFrame): fire perimeter dataset with fire ID (and iteration ID) and geometry
+        hexagons (GeoDataFrame): geometry of hexagonal patches with ID field
 
     Returns:
         _type_: _description_
@@ -127,7 +130,7 @@ def generate_ssr(fire_vectors, hexagons, **kwargs):
 
     Args:
         fire_vectors (_type_): _description_
-        hexagons (_type_): _description_
+        hexagons (GeoDataFrame): geometry of hexagonal patches with ID field
 
     Returns:
         _type_: _description_

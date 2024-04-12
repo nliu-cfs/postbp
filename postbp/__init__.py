@@ -12,6 +12,7 @@ from .dataloader import(
     read_fireshp,  #noqa
     read_pointcsv,   #noqa
     read_pointshp,   #noqa
+    validify_fireshp, #noqa
 ) 
 
 from .postbp import (

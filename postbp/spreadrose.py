@@ -50,7 +50,7 @@ def generate_fire_rose(pijVectors, nodes, **kwargs):
 
     Args:
         pijVectors (_type_): _description_
-        nodes (_type_): _description_
+        nodes (GeoDataFrame): centroid points of the hexagonal patch network
 
     Returns:
         _type_: _description_

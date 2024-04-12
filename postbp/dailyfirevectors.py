@@ -15,10 +15,10 @@ def angle(record):
     """Calculate angle from three points: ignition point and the points where fire spread from and to.  
 
     Args:
-        record (_type_): _description_
+        record (dataframe): a row of the output from generate_daily_vectors function
 
     Returns:
-        _type_: _description_
+        degree value: the value of beta angle, i.e. the angle between the line connecting ignition point and starting point of fire, and the line connecting the hexagon nodes that a fire spreading from and to. 
     """    
     x0, y0 = record['geometry_x'].x, record['geometry_x'].y
     x1, y1 = record['geometry'].x, record['geometry'].y
@@ -32,17 +32,17 @@ def angle(record):
 
 
 def generate_daily_vectors(fireshp, ignition, hexagons, bufferFactor=10, **kwargs):
-    """_summary_
+    """Generate fire spreading vectors from the daily fire spread perimeters
 
     Args:
-        fireshp (_type_): _description_
-        ignition (_type_): _description_
-        hexagons (_type_): _description_
+        fireshp (GeoDataFrame): the daily fire perimeter geometry with fire ID and day of spread as attributes
+        ignition (GeoDataFrame): ignition point shapes with fire ID field in attributes
+        hexagons (GeoDataFrame): geometry of hexagonal patches with ID field
         bufferFactor (int, optional): convert ignition point into a circle polygon of the diameter of bufferFactor
 it shall be small enough so as not to have ignition point locates in more than one hexagons it also defines threshold for the minimum area of fire perimeter to be in a hexagon to be regarded as burned. Defaults to 10.
 
     Returns:
-        _type_: _description_
+        DataFrame: a dataframe table containing fire starting hexagon ID (i), destination hexagon ID (j), 'day', fire ID, and ignition hexagon ID 
     """    
     hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:
@@ -106,14 +106,14 @@ it shall be small enough so as not to have ignition point locates in more than o
     return df
 
 def calc_angles(vectors, nodes, **kwargs):
-    """_summary_
+    """Calculate beta angle for every pair of vectors of fire spread
 
     Args:
-        vectors (_type_): _description_
-        nodes (_type_): _description_
+        vectors (dataframe): outputs from generate_daily_vector function
+        nodes (GeoDataFrame): centroid points of the hexagonal patch network
 
     Returns:
-        _type_: _description_
+        dataframe: a dataframe containing geometry of i, j, ignition point and beta angle value of each vector
     """    
     node = nodes.copy()
     if 'Node_ID' in kwargs:
@@ -137,19 +137,19 @@ def calc_angles(vectors, nodes, **kwargs):
     vectorsW.drop_duplicates(subset = ['day', 'column_j', 'fire', 'ignPt', 'column_i'], keep = 'first', inplace = True)
     return vectorsW
 
-def select_angle(vectors, alpha):
-    """_summary_
+def select_angle(vectors_with_angle, alpha):
+    """Select intended angle of fire spread sector
 
     Args:
-        vectors (_type_): _description_
-        alpha (_type_): _description_
+        vectors_with_angle (dataframe): outputs from calc_angles function
+        alpha (degree): fire spread sector angle (alpha angle), value from 0 to 360
 
     Returns:
-        _type_: _description_
+        dataframe: a dataframe containing geometry of i, j, ignition point and beta angle value of each vector
     """    
     maxAngle = alpha/2+180
     minAngle = 180-alpha/2
-    vectorsV = vectors.copy()
+    vectorsV = vectors_with_angle.copy()
     vectorsV.drop(vectorsV.loc[vectorsV['angle'] > maxAngle].index, inplace = True)
     vectorsV.drop(vectorsV.loc[vectorsV['angle'] < minAngle].index, inplace = True)
     vectorsV.sort_values(by = ['fire','day'], inplace = True)

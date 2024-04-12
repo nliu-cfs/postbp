@@ -2,35 +2,39 @@
 """
 import geopandas as gpd
 from shapely.geometry import LineString #, Polygon, Point
+from tqdm import tqdm
 
 def prj2hex(shp0, hexagons, threshold=0):
-    """Generate intersection shape by overlaying shapefile shp0 and the hexagon shapefile
+    """Generate a geometric intersection of shp0 and the hexagon shapefile.
     option to set threshold
 
     Args:
-        shp0 (type:GeoDataFrame): _description_
+        shp0 (GeoDataFrame): GeoDataFrame to be identified by hexagon shape
         hexagons (GeoDataFrame): hexagonal patches
-        threshold (int, optional): _description_. Defaults to 0.
+        threshold (float, optional): Value between 0 and 1. The proportion for classifying hexagon as intersecting with shp0. Defaults to 0.
 
     Returns:
-        GeoDataFrame: _description_
+        GeoDataFrame: Return a GeoDataFrame of the intersection with hexagon ID field as attributes
     """    
-    
-    shp1 = gpd.overlay(shp0, hexagons, how='intersection') 
+    thresholdArea = hexagons.at[1,'geometry'].area * threshold
+    try:
+        shp1 = gpd.overlay(shp0, hexagons, how='intersection') 
+    except:
+        pass    
     shp1['areaFire'] = shp1.geometry.area
-    shp1 = shp1.loc[shp1['areaFire'] > threshold]
+    shp1 = shp1.loc[shp1['areaFire'] > thresholdArea]
     shp1.drop(labels='areaFire', axis=1, inplace=True)
     return shp1
 
 def pij_to_shp(pij_input, nodes, **kwargs):
-    """Generate shapefile of lines connecting i and j, with column indicating probability of spread
+    """Adding geometry to pij vectors file
 
     Args:
-        pij_input (_type_): _description_
-        nodes (_type_): _description_
+        pij_input (DataFrame): pij dataframe
+        nodes (GeoDataFrame): centroid of the hexagonal patches
 
     Returns:
-        _type_: _description_
+        GeoDataFrame: pij value with geometry of lines connecting node-i and node-j
     """    
     
     pij = pij_input.copy()

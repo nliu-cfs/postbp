@@ -9,6 +9,7 @@
 '''
 
 import geopandas as gpd
+import pandas as pd
 from shapely.geometry import Polygon, Point, LineString
 import warnings
 warnings.filterwarnings("ignore")
@@ -174,7 +175,8 @@ def create_arcs(hexagons, **kwargs):
         mmnn = gpd.GeoDataFrame(df, crs = SRID, geometry = mmnn )
         mmnn['Node_1'] = mmmm
         mmnn['Node_2'] = nnnn
-        arcs = arcs.append(mmnn)
+        arcs = pd.concat([arcs,mmnn])
+
     arcs['Node_1'] = arcs['Node_1'].astype(int)
     arcs['Node_2'] = arcs['Node_2'].astype(int)
 
