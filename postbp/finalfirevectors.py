@@ -115,7 +115,7 @@ def generate_fire_vectors(fireshp, ignition, hexagons, threshold = 0, loopBy = "
     return fire_vectors
 
 def pij_from_vectors(vectors, iterations):
-    """Group vector pair by i, j and calculate probability by deviding number of occurence by number of iterations
+    """Group vector pair by i, j and calculate probability by dividing number of occurrence by number of iterations
 
     Args:
         vectors (dataframe): outputs from generate_fire_vectors function
