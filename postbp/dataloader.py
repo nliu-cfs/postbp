@@ -101,13 +101,13 @@ def read_pointshp(path_n_file_name, **kwargs):
     return points
 
 def validify_fireshp(fireshp):
-    """if encounter error message of ''
+    """if encounter error message of invalid geometry, use this function to convert invalid geometry to valid ones
 
     Args:
         fireshp (GeoDataFrame): fire perimeter dataset with fire ID (and iteration ID) and geometry
 
     Returns:
-        _type_: _description_
+        GeoDataFrame: return validified geodataframe
     """    
     from shapely.validation import make_valid
     fireshp.geometry = fireshp.apply(lambda row: make_valid(row.geometry) if not row.geometry.is_valid else row.geometry, axis=1)

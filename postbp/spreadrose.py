@@ -7,13 +7,13 @@ from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 def angle_from_pij(record):
-    """_summary_
+    """Calculate the clockwise angles between the fire vector and the North from postbp function generate_daily_vectors.
 
     Args:
-        record (_type_): _description_
+        record (DataFrame): a row of outputs from pij_from_vectors function
 
     Returns:
-        _type_: _description_
+        degree: return angle value
     """    
     x0, y0 = record['geometry_x'].x, record['geometry_x'].y
     x1, y1 = record['geometry_y'].x, record['geometry_y'].y
@@ -26,14 +26,14 @@ def angle_from_pij(record):
     return angle
 
 def angle_from_2pts(p1, p2):
-    """_summary_
+    """Calculate the clockwise angles between the fire vector and the North from start and end points of a vector.
 
     Args:
-        p1 (_type_): _description_
-        p2 (_type_): _description_
+        p1 (GeoDataFrame): starting point of a vector with geometry.
+        p2 (GeoDataFrame): end point of a vector with geometry.
 
     Returns:
-        _type_: _description_
+        degree: return angle value
     """    
     x0, y0 = p1['geometry'].x,p1['geometry'].y
     x1, y1 = p2['geometry'].x, p2['geometry'].y
@@ -46,14 +46,14 @@ def angle_from_2pts(p1, p2):
     return angle
 
 def generate_fire_rose(pijVectors, nodes, **kwargs):
-    """_summary_
+    """Prepare data for plotting fire rose.
 
     Args:
-        pijVectors (_type_): _description_
+        pijVectors (DataFrame): outputs from pij_from_vectors function
         nodes (GeoDataFrame): centroid points of the hexagonal patch network
 
     Returns:
-        _type_: _description_
+        DataFrame: return a dataframe containing angles, pij, and distance of spread. 
     """    
     node = nodes.copy()
     pij = pijVectors.copy() 
@@ -77,6 +77,13 @@ def generate_fire_rose(pijVectors, nodes, **kwargs):
     return pij
 
 def plot_rose(pijRose, column='pij', save = False):
+    """Plot fire rose.
+
+    Args:
+        pijRose (DataFrame): a dataframe containing angles, pij, and distance of spread. 
+        column (str, optional): value can be 'pij' or 'len'. Defaults to 'pij'.
+        save (bool, optional): whether save the plot to current repository or plot on screen. Defaults to False.
+    """    
     if save:
         plt.rcParams.update({'font.size': 20,"legend.frameon":False})
         ax = WindroseAxes.from_ax()

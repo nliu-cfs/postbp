@@ -82,17 +82,17 @@ def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
         return fire_vectors
             
 def generate_fire_vectors(fireshp, ignition, hexagons, threshold = 0, loopBy = "fire", **kwargs):
-    """_summary_
+    """Generate fire spreading vectors from final fire spread perimeters
 
     Args:
         fireshp (GeoDataFrame): fire perimeter dataset with fire ID (and iteration ID) and geometry
-        ignition (_type_): _description_
+        ignition (GeoDataFrame): ignition point shapes with fire ID field in attributes
         hexagons (GeoDataFrame): geometry of hexagonal patches with ID field
-        threshold (int, optional): _description_. Defaults to 0.
-        loopBy (str, optional): _description_. Defaults to "fire".
+        threshold (float, optional): Value between 0 and 1. The proportion for classifying hexagon as intersecting with shp0. Defaults to 0.
+        loopBy (str, optional): loop by 'fire' of 'iteration'. Defaults to "fire".
 
     Returns:
-        _type_: _description_
+        DataFrame: a dataframe table containing fire starting hexagon ID (i), destination hexagon ID (j), fire ID, and ignition hexagon ID 
     """    
     hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:
@@ -115,14 +115,14 @@ def generate_fire_vectors(fireshp, ignition, hexagons, threshold = 0, loopBy = "
     return fire_vectors
 
 def pij_from_vectors(vectors, iterations):
-    """_summary_
+    """Group vector pair by i, j and calculate probability by deviding number of occurence by number of iterations
 
     Args:
-        vectors (_type_): _description_
+        vectors (dataframe): outputs from generate_fire_vectors function
         iterations (int): number of iterations
 
     Returns:
-        _type_: _description_
+        GeoDataFrame: return a geodataframe with probability values for pairs of i, j on the landscape
     """    
 
     fire_pij = vectors.groupby(['column_j', 'column_i'])[['fire']].count()

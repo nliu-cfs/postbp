@@ -45,7 +45,8 @@ def generate_ign_prob(ignition, hexagons, iterations, **kwargs):
         hexagons (GeoDataFrame): geometry of hexagonal patches with ID field
         iterations (int): number of iterations
     Returns:
-        _type_: _description_
+        GeoDataFrame: return a GeoDataFrame containing ignition probability value at each hexagonal patches
+
     """    
 
     ign = ignition.copy()
@@ -64,16 +65,16 @@ def generate_ign_prob(ignition, hexagons, iterations, **kwargs):
     return ignGr
 
 def generate_fireshed(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
-    """Generate fire shed to an area of concern (AOC) based on the fire vectors 
+    """Generate the fireshed in regard to an area of concern (AOC) based on the fire vectors 
 
     Args:
-        fire_vectors (_type_): _description_
-        AOCshp (_type_): _description_
+        fire_vectors (DataFrame): outputs from generate_fire_vectors function
+        AOCshp (GeoDataFrame): geometry of the area of concern
         fireshp (GeoDataFrame): fire perimeter dataset with fire ID (and iteration ID) and geometry
         hexagons (GeoDataFrame): geometry of hexagonal patches with ID field
 
     Returns:
-        _type_: _description_
+        GeoDataFrame: return a geodataframe of dissolved geometry of the fireshed of fires that can burn into the area of concern.
     """    
     hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:
@@ -95,16 +96,16 @@ def generate_fireshed(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
     return fireAOCshp
 
 def generate_fireplain(fire_vectors, AOCshp, fireshp, hexagons, **kwargs):
-    """_summary_
+    """Generate the fireplain in regard to an area of concern (AOC) based on the fire vectors
 
     Args:
-        fire_vectors (_type_): _description_
-        AOCshp (_type_): _description_
+        fire_vectors (DataFrame): outputs from generate_fire_vectors function
+        AOCshp (GeoDataFrame): geometry of the area of concern
         fireshp (GeoDataFrame): fire perimeter dataset with fire ID (and iteration ID) and geometry
         hexagons (GeoDataFrame): geometry of hexagonal patches with ID field
 
     Returns:
-        _type_: _description_
+        GeoDataFrame: return a geodataframe of dissolved geometry of the fireplain for fires ignited in the area of concern.
     """
     hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:
@@ -129,11 +130,11 @@ def generate_ssr(fire_vectors, hexagons, **kwargs):
     """Generate a shapefile with values of Source-Sink-Ratio based on the fire vectors 
 
     Args:
-        fire_vectors (_type_): _description_
+        fire_vectors (DataFrame): outputs from generate_fire_vectors function
         hexagons (GeoDataFrame): geometry of hexagonal patches with ID field
 
     Returns:
-        _type_: _description_
+        GeoDataFrame: return a GeoDataFrame containing the Source-Sink Ratio value at each hexagonal patches
     """    
     hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:

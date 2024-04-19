@@ -16,7 +16,7 @@ warnings.filterwarnings("ignore")
 import math
 from tqdm import tqdm
 
-def create_hexnodes(area, xmin, ymin, xmax, ymax):
+def _create_hexnodes(area, xmin, ymin, xmax, ymax):
     nodes = []
     
     side = 3**0.25 * math.sqrt(2 * area / 9)
@@ -53,7 +53,7 @@ def create_hexnodes(area, xmin, ymin, xmax, ymax):
         
     return nodes
 
-def create_hexgrids(area, x, y):
+def _create_hexgrids(area, x, y):
     """
     Create a hexagon centered on (x, y)
     :param x: x-coordinate of the hexagon's center
@@ -66,13 +66,17 @@ def create_hexgrids(area, x, y):
     return Polygon(c)
 
 def create_hexagons_nodes(boundaryShp, **kwargs):
-    """_summary_
-
+    """Creat geodataframe of hexagonal patches and the nodes (centroids) of the hexagons of defined size and range.
+       Hexagon size can be defined in area, side length, or long diameter. Must input one parameter out of the three options.
     Args:
-        boundaryShp (_type_): _description_
+        boundaryShp (GeoDataFrame): the geodataframe defines the range that the hexagonal patches covers
+        area (float, OPTIONAL): define the size of each hexagon by area in cubic meters
+        side (float, OPTIONAL): define the size of each hexagon by side length in meter
+        diameter (float, OPTIONAL): define the size of each hexagon by long diameter in meter
 
     Returns:
-        _type_: _description_
+        GeoDataFrame: return geodataframes of hexagons and nodes of the defined size and covering the defined range.
+                      Note to give two variable names when using this function.
     """    
     if 'area' in kwargs:
         area = kwargs['area']
@@ -85,8 +89,8 @@ def create_hexagons_nodes(boundaryShp, **kwargs):
     
     myCRS = boundaryShp.crs
     xmin,ymin,xmax,ymax =  boundaryShp.total_bounds
-    nodes = create_hexnodes(area, xmin, ymin, xmax, ymax)
-    hexagons = [create_hexgrids(area, node[0], node[1]) for node in nodes]
+    nodes = _create_hexnodes(area, xmin, ymin, xmax, ymax)
+    hexagons = [_create_hexgrids(area, node[0], node[1]) for node in nodes]
     
     nodes = [Point(node) for node in nodes]
     nodes = gpd.GeoDataFrame({'geometry': nodes})
@@ -99,14 +103,17 @@ def create_hexagons_nodes(boundaryShp, **kwargs):
     return hexagons, nodes
 
 def create_hexagons(boundaryShp, **kwargs):
-    """_summary_
-
+    """Creat geodataframe of hexagonal patches of defined size and range.
+       Hexagon size can be defined in area, side length, or long diameter. Must input one parameter out of the three options.
     Args:
-        boundaryShp (_type_): _description_
+        boundaryShp (GeoDataFrame): the geodataframe defines the range that the hexagonal patches covers
+        area (float, OPTIONAL): define the size of each hexagon by area in cubic meters
+        side (float, OPTIONAL): define the size of each hexagon by side length in meter
+        diameter (float, OPTIONAL): define the size of each hexagon by long diameter in meter
 
     Returns:
-        _type_: _description_
-    """    
+        GeoDataFrame: return a geodataframe of hexagonal network of the defined size and covering the defined range.
+    """   
     if 'area' in kwargs:
         area = kwargs['area']
 
@@ -118,8 +125,8 @@ def create_hexagons(boundaryShp, **kwargs):
     
     myCRS = boundaryShp.crs
     xmin,ymin,xmax,ymax =  boundaryShp.total_bounds
-    nodes = create_hexnodes(area, xmin, ymin, xmax, ymax)
-    hexagons = [create_hexgrids(area, node[0], node[1]) for node in nodes]
+    nodes = _create_hexnodes(area, xmin, ymin, xmax, ymax)
+    hexagons = [_create_hexgrids(area, node[0], node[1]) for node in nodes]
     
     nodes = [Point(node) for node in nodes]
     nodes = gpd.GeoDataFrame({'geometry': nodes})
@@ -132,13 +139,13 @@ def create_hexagons(boundaryShp, **kwargs):
     return hexagons
 
 def nodes_from_hexagons(hexagons):
-    """_summary_
+    """Generate nodes geometry from hexagons
 
     Args:
-        hexagons (_type_): _description_
+        hexagons (GeoDataFrame): geometry and ID of hexagonal patches
 
     Returns:
-        _type_: _description_
+        GeoDataFrame: return nodes geometry with ID attributes same as the hexagons.
     """    
     nodes = hexagons.copy()
     nodes['centroid'] = nodes.geometry.centroid
@@ -148,13 +155,13 @@ def nodes_from_hexagons(hexagons):
     return nodes
 
 def create_arcs(hexagons, **kwargs):
-    """_summary_
+    """Create geometry of arcs connecting each neighbouring hexagons.
 
     Args:
-        hexagons (_type_): _description_
+        hexagons (GeoDataFrame): geometry and ID of hexagonal patches
 
     Returns:
-        _type_: _description_
+        GeoDataFrame: return arcs geometry with attributes indicating IDs of the two hexagons it connects.
     """    
     hexagon = hexagons.copy()
     if 'Node_ID' in kwargs:

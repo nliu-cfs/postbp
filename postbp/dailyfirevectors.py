@@ -109,7 +109,7 @@ def calc_angles(vectors, nodes, **kwargs):
     """Calculate beta angle for every pair of vectors of fire spread
 
     Args:
-        vectors (dataframe): outputs from generate_daily_vector function
+        vectors (dataframe): outputs from generate_daily_vectors function
         nodes (GeoDataFrame): centroid points of the hexagonal patch network
 
     Returns:
