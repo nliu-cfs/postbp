@@ -6,7 +6,7 @@
 '''
 
 import geopandas as gpd
-from shapely.geometry import Polygon, Point, LineString
+from shapely.geometry import  Point #, LineString, Polygon,
 import pandas as pd
 import warnings
 from shapely.errors import ShapelyDeprecationWarning
@@ -37,24 +37,26 @@ def read_pointcsv(path_n_file_name, SRID, **kwargs):
     Args:
         path_n_file_name (string): path and file name of fire ignition points shapefile
         SRID (CRS): spatial reference identifiers (SRID) 
-
+        x_col (str): column name of x coordinates, default to be 'x_coord'
+        y_col (str): column name of x coordinates, default to be 'y_coord'
     Returns:
         GeoDataFrame: ignition point fire ID and geometry
     """    
 
     if "x_col" in kwargs:
-        x_coord = kwargs['x_col']
+        x_col = kwargs['x_col']
     else:
-        x_coord = 'x_coord'
+        x_col = 'x_coord'
 
     if "y_col" in kwargs:
-        y_coord = kwargs['y_col']
+        y_col = kwargs['y_col']
     else:
-        y_coord = 'y_coord'
+        y_col = 'y_coord'
 
     #### read in BurnP-3 output ignition point csv file
     points = pd.read_csv(path_n_file_name)
-    points['geometry'] = [Point(xy) for xy in zip(points[x_coord], points[y_coord])]
+    # points.columns=points.columns.str.strip()
+    points['geometry'] = [Point(xy) for xy in zip(points[x_col], points[y_col])]
     # note: make sure ignition points and fire shape are of the same projection, below it directly set by prj
     points = gpd.GeoDataFrame(points, crs = SRID, geometry = points['geometry'] )
     points = points[['fire', 'iteration', 'geometry']]
@@ -65,22 +67,23 @@ def read_pointshp(path_n_file_name, **kwargs):
     """Load the ignition points if the data is provided as X-Y coordinates in separate columns in the attribute table of the ESRI shapefile with fire perimeters (or in a separate ESRI point shapefile)
 
     Args:
-        path_n_file_name (string): path and file name of fire ignition points shapefile
-
+        path_n_file_name (str): path and file name of fire ignition points shapefile
+        x_col (str): column name of x coordinates, default to be 'x_coord'
+        y_col (str): column name of x coordinates, default to be 'y_coord'
     Returns:
         GeoDataFrame: ignition point fire ID and geometry
     """ 
        
     if "x_col" in kwargs:
-        x_coord = kwargs['x_col']
+        x_col = kwargs['x_col']
         
     else:
-        x_coord = 'x_coord'
+        x_col = 'x_coord'
 
     if "y_col" in kwargs:
-        y_coord = kwargs['y_col']
+        y_col = kwargs['y_col']
     else:
-        y_coord = 'y_coord'
+        y_col = 'y_coord'
         
     #### read in BurnP-3 output ignition point csv file
     points = gpd.read_file(path_n_file_name, driver='ESRI Shapefile')
@@ -93,7 +96,7 @@ def read_pointshp(path_n_file_name, **kwargs):
         SRID = points.crs
         points.drop(labels='geometry',axis=1,inplace=True)
         points = points[['fire', 'iteration']]
-        points['geometry'] = [Point(xy) for xy in zip(points[x_coord], points[y_coord])]
+        points['geometry'] = [Point(xy) for xy in zip(points[x_col], points[y_col])]
         # note: make sure ignition points and fire shape are of the same projection, below it directly set by prj
         points = gpd.GeoDataFrame(points, crs = SRID, geometry = points['geometry'] )
         points = points[['fire', 'iteration', 'geometry']]
