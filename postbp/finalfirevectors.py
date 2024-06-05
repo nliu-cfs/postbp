@@ -16,7 +16,7 @@ from shapely.errors import ShapelyDeprecationWarning
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 from tqdm import tqdm
 
-def spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
+def _spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
     """Project fire perimeter and ignition points to the hexagonal network
 
     Args:
@@ -99,10 +99,10 @@ def generate_fire_vectors(fireshp, ignition, hexagons, threshold = 0, loopBy = "
         hexagon = hexagon.rename(columns={kwargs["Node_ID"]: 'Node_ID'})
     
     if loopBy == "iteration":
-        fire_vectors = spatial_join(fireshp, ignition, hexagon, threshold, iteration=True)
+        fire_vectors = _spatial_join(fireshp, ignition, hexagon, threshold, iteration=True)
     
     if loopBy == "fire":
-        fire_vectors = spatial_join(fireshp, ignition, hexagon, threshold, iteration=False)
+        fire_vectors = _spatial_join(fireshp, ignition, hexagon, threshold, iteration=False)
      
     fire_vectors = fire_vectors.reset_index(drop = True)
     fire_vectors.drop(fire_vectors[fire_vectors['Node_ID_y'].isna()].index, inplace = True)                    
