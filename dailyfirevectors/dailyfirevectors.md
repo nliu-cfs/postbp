@@ -1,0 +1,3 @@
+# dailyfirevectors module
+
+::: postbp.dailyfirevectors
