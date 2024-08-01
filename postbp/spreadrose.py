@@ -84,16 +84,16 @@ def plot_rose(pijRose, column='pij', save = False):
         column (str, optional): value can be 'pij' or 'len'. Defaults to 'pij'.
         save (bool, optional): whether save the plot to current repository or plot on screen. Defaults to False.
     """    
+    
+    plt.rcParams.update({'font.size': 20,"legend.frameon":False})
+    ax = WindroseAxes.from_ax()
+    ax.bar(pijRose['angle'], pijRose[column], normed=True, blowto=False, cmap=cm.Set2, opening=0.8, edgecolor='white')
+    ax.set_legend(fontsize="20",loc=(1.1, 0.01))
     if save:
-        plt.rcParams.update({'font.size': 20,"legend.frameon":False})
-        ax = WindroseAxes.from_ax()
-        ax.bar(pijRose['angle'], pijRose[column], normed=True, blowto=False, cmap=cm.Set2, opening=0.8, edgecolor='white')
-        ax.set_legend(fontsize="20",loc=(1.01, 0.01))
         plt.savefig(column + 'Rose.png', bbox_inches='tight', pad_inches=.1, transparent=False)
         plt.close()
     else:
-        plt.rcParams.update({'font.size': 20,"legend.frameon":False})
-        ax = WindroseAxes.from_ax()
-        ax.bar(pijRose['angle'], pijRose[column], normed=True, blowto=False, cmap=cm.Set2, opening=0.8, edgecolor='white')
-        ax.set_legend(fontsize="20",loc=(1.01, 0.01))
         plt.show()
+
+    plt.rcParams.update(plt.rcParamsDefault)
+
