@@ -22,16 +22,15 @@ def read_fireshp(path_n_file_name, daily=False):
         GeoDataFrame: ignition point fire ID and geometry
     """    
      # check whether it is a daily progression shapefile
-    if daily:
-        columns = ['fire', 'iteration', 'day']
-    else:
-        columns = ['fire', 'iteration']
 
-    fire = gpd.read_file(path_n_file_name, columns=columns, driver = 'ESRI Shapefile')
+    fire = gpd.read_file(path_n_file_name,  driver = 'ESRI Shapefile') #columns=columns,
 
     # as geopands has malfunction in reading only the columns being specified, we manually redundantly do it again here
-    fire = fire[columns]
-
+    if daily:
+        fire = fire[['fire', 'iteration', 'day', 'geometry']]
+    else:
+        fire = fire[['fire', 'iteration', 'geometry']]
+        
     # some BP3 fireshp data does not have valid prj, it needs to have a warning to the users
     if not fire.crs:
         print('The fire perimeter shapefile does not have a valid projection, please set a valid SRID.')
