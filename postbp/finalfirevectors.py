@@ -129,9 +129,9 @@ def pij_from_vectors(vectors, iterations):
     fire_pij.reset_index(inplace = True)
     fire_pij = fire_pij.drop(fire_pij[fire_pij['column_j'] == fire_pij['column_i']].index)
     fire_pij['pij'] = fire_pij['fire'] / iterations
-    fire_pij['pij'] = fire_pij['pij'].round(5)
-    fire_pij['pij'] = fire_pij['pij'].apply(lambda x: '%.5f' % x)
+    fire_pij['pij'] = fire_pij['pij'].round(7)
+    fire_pij['pij'] = fire_pij['pij'].apply(lambda x: '%.7f' % x)
     fire_pij.rename(columns={'fire':'firecounts'},inplace=True)
-    fire_pij.sort_values(by = ['firecounts'], inplace = True)
+    fire_pij.sort_values(by = ['column_i', 'column_j'], inplace = True)
     fire_pij.reset_index(drop=True, inplace=True)
     return fire_pij
