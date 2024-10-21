@@ -16,7 +16,7 @@ warnings.filterwarnings("ignore")
 import math
 from tqdm import tqdm
 
-def _create_hexnodes(area, xmin, ymin, xmax, ymax):
+def _create_hexnodes(area, xmin, ymin, xmax, ymax, offset_x, offset_y):
     nodes = []
     
     side = 3**0.25 * math.sqrt(2 * area / 9)
@@ -45,13 +45,13 @@ def _create_hexnodes(area, xmin, ymin, xmax, ymax):
     v_start_idx = (v_start_idx + 1) % 2
     while c_x < h_end:
         while c_y < v_end:
-            nodes.append((c_x, c_y))
+            nodes.append((c_x+offset_x*2*side, c_y+offset_y*2*side))
             c_y += v_step
         c_x += h_step
         c_y = v_start_array[v_start_idx]
         v_start_idx = (v_start_idx + 1) % 2
         
-    return nodes
+    return nodes    
 
 def _create_hexgrids(area, x, y):
     """
@@ -64,45 +64,11 @@ def _create_hexgrids(area, x, y):
     l = 3**0.25 * math.sqrt(2 * area / 9)
     c = [[x + math.cos(math.radians(angle)) * l, y + math.sin(math.radians(angle)) * l] for angle in range(0, 360, 60)]
     return Polygon(c)
+# =============================================================================
+# ## 50ha size hexagons shifting one quarter and two quarters of shorter diagonal distance on eight directions
+# =============================================================================
 
-def create_hexagons_nodes(boundaryShp, **kwargs):
-    """Creat geodataframe of hexagonal patches and the nodes (centroids) of the hexagons of defined size and range.
-       Hexagon size can be defined in area, side length, or long diameter. Must input one parameter out of the three options.
-    Args:
-        boundaryShp (GeoDataFrame): the geodataframe defines the range that the hexagonal patches covers
-        area (float, OPTIONAL): define the size of each hexagon by area in cubic meters
-        side (float, OPTIONAL): define the size of each hexagon by side length in meter
-        diameter (float, OPTIONAL): define the size of each hexagon by long diameter in meter
-
-    Returns:
-        GeoDataFrame: return geodataframes of hexagons and nodes of the defined size and covering the defined range.
-                      Note to give two variable names when using this function.
-    """    
-    if 'area' in kwargs:
-        area = kwargs['area']
-
-    if "side" in kwargs:
-        area = kwargs["side"]**2*3/2*math.sqrt(3)
-
-    if "diameter" in kwargs:
-        area = kwargs["diameter"]**2*3/8*math.sqrt(3)
-    
-    myCRS = boundaryShp.crs
-    xmin,ymin,xmax,ymax =  boundaryShp.total_bounds
-    nodes = _create_hexnodes(area, xmin, ymin, xmax, ymax)
-    hexagons = [_create_hexgrids(area, node[0], node[1]) for node in nodes]
-    
-    nodes = [Point(node) for node in nodes]
-    nodes = gpd.GeoDataFrame({'geometry': nodes})
-    nodes['Node_ID'] = nodes.index + 1
-    nodes.crs = myCRS
-    hexagons = gpd.GeoDataFrame({'geometry':hexagons})
-    hexagons['Node_ID'] = hexagons.index + 1
-    hexagons.crs = myCRS
-
-    return hexagons, nodes
-
-def create_hexagons(boundaryShp, **kwargs):
+def create_hexagons(boundaryShp, offset_x=0, offset_y=0, **kwargs):
     """Creat geodataframe of hexagonal patches of defined size and range.
        Hexagon size can be defined in area, side length, or long diameter. Must input one parameter out of the three options.
     Args:
@@ -110,6 +76,12 @@ def create_hexagons(boundaryShp, **kwargs):
         area (float, OPTIONAL): define the size of each hexagon by area in cubic meters
         side (float, OPTIONAL): define the size of each hexagon by side length in meter
         diameter (float, OPTIONAL): define the size of each hexagon by long diameter in meter
+        offset_x (fraction, OPTIONAL): define the horizontal shifting offset for hexagons, 
+                                    by fraction of the length of hexagon long diagonal
+                                    could be postive and negative
+        offset_y (fraction, OPTIONAL): define the vertical shifting offset for hexagons, 
+                                            by fraction of the length of hexagon long diagonal
+                                            could be postive and negative
 
     Returns:
         GeoDataFrame: return a geodataframe of hexagonal network of the defined size and covering the defined range.
@@ -117,15 +89,18 @@ def create_hexagons(boundaryShp, **kwargs):
     if 'area' in kwargs:
         area = kwargs['area']
 
-    if "side" in kwargs:
+    elif "side" in kwargs:
         area = kwargs["side"]**2*3/2*math.sqrt(3)
 
-    if "diameter" in kwargs:
+    elif "diameter" in kwargs:
         area = kwargs["diameter"]**2*3/8*math.sqrt(3)
+    
+    else:
+        print('Please define a value using parameter names of either area, side, or diameter of the intended hexagon patches')
     
     myCRS = boundaryShp.crs
     xmin,ymin,xmax,ymax =  boundaryShp.total_bounds
-    nodes = _create_hexnodes(area, xmin, ymin, xmax, ymax)
+    nodes = _create_hexnodes(area, xmin, ymin, xmax, ymax, offset_x, offset_y)
     hexagons = [_create_hexgrids(area, node[0], node[1]) for node in nodes]
     
     nodes = [Point(node) for node in nodes]
@@ -137,6 +112,51 @@ def create_hexagons(boundaryShp, **kwargs):
     hexagons.crs = myCRS
 
     return hexagons
+
+def create_hexagons_nodes(boundaryShp, offset_x=0, offset_y=0, **kwargs):
+    """Creat geodataframe of hexagonal patches and the nodes (centroids) of the hexagons of defined size and range.
+       Hexagon size can be defined in area, side length, or long diameter. Must input one parameter out of the three options.
+    Args:
+        boundaryShp (GeoDataFrame): the geodataframe defines the range that the hexagonal patches covers
+        area (float, OPTIONAL): define the size of each hexagon by area in cubic meters
+        side (float, OPTIONAL): define the size of each hexagon by side length in meter
+        diameter (float, OPTIONAL): define the size of each hexagon by long diameter in meter
+        offset_x (fraction, OPTIONAL): define the horizontal shifting offset for hexagons, 
+                                    by fraction of the length of hexagon long diagonal
+                                    could be postive and negative
+        offset_y (fraction, OPTIONAL): define the vertical shifting offset for hexagons, 
+                                            by fraction of the length of hexagon long diagonal
+                                            could be postive and negative
+    Returns:
+        GeoDataFrame: return geodataframes of hexagons and nodes of the defined size and covering the defined range.
+                      Note to give two variable names when using this function.
+    """    
+    if 'area' in kwargs:
+        area = kwargs['area']
+
+    elif "side" in kwargs:
+        area = kwargs["side"]**2*3/2*math.sqrt(3)
+
+    elif "diameter" in kwargs:
+        area = kwargs["diameter"]**2*3/8*math.sqrt(3)
+    
+    else:
+        print('Please define a value using parameter names of either area, side, or diameter of the intended hexagon patches')
+
+    myCRS = boundaryShp.crs
+    xmin,ymin,xmax,ymax =  boundaryShp.total_bounds
+    nodes = _create_hexnodes(area, xmin, ymin, xmax, ymax, offset_x, offset_y)
+    hexagons = [_create_hexgrids(area, node[0], node[1]) for node in nodes]
+    
+    nodes = [Point(node) for node in nodes]
+    nodes = gpd.GeoDataFrame({'geometry': nodes})
+    nodes['Node_ID'] = nodes.index + 1
+    nodes.crs = myCRS
+    hexagons = gpd.GeoDataFrame({'geometry':hexagons})
+    hexagons['Node_ID'] = hexagons.index + 1
+    hexagons.crs = myCRS
+
+    return hexagons, nodes
 
 def nodes_from_hexagons(hexagons):
     """Generate nodes geometry from hexagons
