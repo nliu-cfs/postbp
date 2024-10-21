@@ -81,7 +81,7 @@ def create_hexagons(boundaryShp, offset_x=0, offset_y=0, **kwargs):
                                     could be postive and negative
         offset_y (fraction, OPTIONAL): define the vertical shifting offset for hexagons, 
                                             by fraction of the length of hexagon long diagonal
-                                            could be postive and negative
+                                            could be positive and negative
 
     Returns:
         GeoDataFrame: return a geodataframe of hexagonal network of the defined size and covering the defined range.
@@ -126,7 +126,7 @@ def create_hexagons_nodes(boundaryShp, offset_x=0, offset_y=0, **kwargs):
                                     could be postive and negative
         offset_y (fraction, OPTIONAL): define the vertical shifting offset for hexagons, 
                                             by fraction of the length of hexagon long diagonal
-                                            could be postive and negative
+                                            could be positive and negative
     Returns:
         GeoDataFrame: return geodataframes of hexagons and nodes of the defined size and covering the defined range.
                       Note to give two variable names when using this function.
