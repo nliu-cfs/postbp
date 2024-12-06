@@ -2,7 +2,7 @@
 
 __author__ = """Ning Liu"""
 __email__ = "ning.liu@nrcan-rncan.gc.ca"
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 
 from .common import (
     prj2hex,  #noqa
