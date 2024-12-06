@@ -49,7 +49,7 @@ pip install postbp
 ## Documentation and Support
 
 Comprehensive documentation is available at:
-![PostBP](https://nliu-cfs.github.io/postbp)
+https://nliu-cfs.github.io/postbp
 
 For any issues or inquiries, please open an issue on the GitHub repository.
 
