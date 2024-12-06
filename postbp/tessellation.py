@@ -198,5 +198,6 @@ def create_arcs(hexagons, **kwargs):
 
     arcs['Node_1'] = arcs['Node_1'].astype(int)
     arcs['Node_2'] = arcs['Node_2'].astype(int)
+    arcs.reset_index(drop=True, inplace=True)
 
     return arcs

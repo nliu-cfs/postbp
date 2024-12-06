@@ -11,6 +11,7 @@ import pandas as pd
 import warnings
 from shapely.errors import ShapelyDeprecationWarning
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
+import numpy as np
 
 def read_fireshp(path_n_file_name, daily=False):
     """Load the files with the final and daily fire perimeters and prepares the data
@@ -121,4 +122,85 @@ def validify_fireshp(fireshp):
     from shapely.validation import make_valid
     fireshp.geometry = fireshp.apply(lambda row: make_valid(row.geometry) if not row.geometry.is_valid else row.geometry, axis=1)
     return fireshp
+
+
+def _loadCSVdata(file_path):
+        try:
+            with open(file_path, 'r') as temp_f:
+                # get No of columns in each line
+                col_count = max([len(l.split(",")) for l in temp_f.readlines()])
+
+            ### Generate column names  (names will be 0, 1, 2, ..., maximum columns - 1)
+            column_names = [i for i in range(col_count)] 
+
+            dataCSV = pd.read_csv(file_path, names=column_names,skiprows=1, header=None)
+            dataCSV.rename(columns={0:'column', 1:'row'}, inplace=True)
+            dataCSV.set_index(['column', 'row'], inplace=True)
+            dataCSV.dropna(how='all',inplace=True)
+            dataCSV.reset_index(inplace=True)
+            reshapeCSV = dataCSV.melt(id_vars=['column','row'], var_name='round', value_name='iterationID')
+            reshapeCSV.dropna(how='any',inplace=True)
+            return reshapeCSV
+
+        except Exception as e:
+            print(
+                "Error",
+                f"An error occurred while reading the file:\n{str(e)}"
+            )
+            return None
+
+def loadBI(file_path):
+    dataBI = _loadCSVdata(file_path)
+    return dataBI
+
+def loadROS(file_path):
+    dataROS = _loadCSVdata(file_path)
+    return dataROS
+
+def loadFI(file_path):
+    dataFI = _loadCSVdata(file_path)
+    return dataFI
+
+def loadASC(file_path):
+        def extract_header_info(file_path):
+            ncols, nrows, xllcorner, yllcorner, cellsize = None, None, None, None, None 
+            with open(file_path, 'r') as file:
+                for i, line in enumerate(file):
+                    if 'ncols' in line:
+                        ncols = int(line.split()[1])
+                    elif 'nrows' in line:
+                        nrows = int(line.split()[1])
+                    elif 'xllcorner' in line:
+                        xllcorner = float(line.split()[1])
+                    elif 'yllcorner' in line:
+                        yllcorner = float(line.split()[1])
+                    elif 'cellsize' in line:
+                        cellsize = float(line.split()[1])
+                        
+                    if ncols and nrows and xllcorner and yllcorner and cellsize:
+                        break
+            
+            return ncols, nrows, xllcorner, yllcorner, cellsize
+
+        try:
+            ncols, nrows, xllcorner, yllcorner, cellsize = extract_header_info(file_path)
+            cols = np.arange(1, ncols + 1)
+            rows = np.arange(1, nrows + 1)
+            outlist = [(i, j) for i in cols for j in rows]
+            grids = pd.DataFrame(data=outlist, columns=['column', 'row'])
+
+            grids['y_coord'] = yllcorner + (grids['row'] - 1) * cellsize
+            grids['x_coord'] = xllcorner + (grids['column'] - 1) * cellsize
+
+            return grids
+
+        except Exception as e:
+            print(
+                "Error",
+                f"An error occurred while reading the file:\n{str(e)}"
+            )
+            return None
+
+
+
 
