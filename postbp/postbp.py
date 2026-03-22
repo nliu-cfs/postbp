@@ -56,7 +56,7 @@ def generate_ign_prob(ignition, hexagons, iterations, **kwargs):
     if 'fire_column' in kwargs:
         ign.rename(columns={kwargs["fire_column"]: 'fire'}, inplace=True)    
 
-    ignSJ = gpd.sjoin(ign, hexagon, how = 'inner', op = 'within')
+    ignSJ = gpd.sjoin(ign, hexagon, how='inner', predicate='within')
     ignGr = ignSJ.groupby(['Node_ID'])[['fire']].count()
     ignGr = hexagon.merge(ignGr, on='Node_ID', how='right')
     ignGr.fillna(0, inplace=True)

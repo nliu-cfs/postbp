@@ -42,8 +42,8 @@ def _spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
                 fire_i = fireshp.loc[fireshp['fire'] == i]
                 fire_ni = prj2hex(fire_i, hexagon, threshold)                        
                 pts_i = ignition.loc[ignition['fire'] == i]
-                #if newer version op is replace by predicate
-                pts_ni = gpd.sjoin(pts_i, hexagon, how = 'inner', op = 'within')
+                 # GeoPandas >= 0.10: use predicate= (op= raises TypeError in 1.x)
+                pts_ni = gpd.sjoin(pts_i, hexagon, how='inner', predicate='within')
                 pts_ni = pts_ni[['fire', 'Node_ID']]
                 
                 dfTemp = fire_ni.merge(pts_ni, on = 'fire', how = 'left')
@@ -67,8 +67,8 @@ def _spatial_join(fireshp, ignition, hexagon, threshold=0, iteration=False):
                     fire_i = fire_j.loc[fire_j['fire'] == i]
                     fire_ni = prj2hex(fire_i, hexagon, threshold)                             
                     pts_i = pts_j.loc[pts_j['fire'] == i]
-                    #if newer version op is replace by predicate
-                    pts_ni = gpd.sjoin(pts_i, hexagon, how = 'inner', op = 'within') 
+                    #Newer version op is replace by predicate
+                    pts_ni = gpd.sjoin(pts_i, hexagon, how='inner', predicate='within') 
                     pts_ni = pts_ni[['fire', 'Node_ID']]
                     
                     dfTemp = fire_ni.merge(pts_ni, on = 'fire', how = 'left')

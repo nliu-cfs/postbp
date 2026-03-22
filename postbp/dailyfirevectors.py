@@ -57,7 +57,7 @@ it shall be small enough so as not to have ignition point locates in more than o
         try: 
             fire_i = fireshp.loc[fireshp['fire'] == i]
             pts_i = ignition.loc[ignition['fire'] == i]
-            pts_ni = gpd.sjoin(pts_i, hexagon, how = 'inner', op = 'within')
+            pts_ni = gpd.sjoin(pts_i, hexagon, how='inner', predicate='within')
             ##### ignition point to all hexes
             dmax = max(fire_i['day'])
             fire_idmax = fire_i.loc[fire_i['day'] == dmax]
